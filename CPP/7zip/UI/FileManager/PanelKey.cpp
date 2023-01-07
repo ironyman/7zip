@@ -380,8 +380,13 @@ bool CPanel::OnKeyDown(LPNMLVKEYDOWN keyDownInfo, LRESULT &result)
         // Doubly null terminated string, last null is for list of null terminated strings.
         // If you're setting this in shell it would be
         // $env:FZF_DEFAULT_COMMAND = 'rg --hidden --no-ignore -l --max-depth 5 ""'
-        UString env = L"FZF_DEFAULT_COMMAND=rg --hidden --no-ignore -l --max-depth 5 \"\"\0\0";
-        findProc->Create(L"fzf.exe", L"", cwd, (LPVOID)env.Ptr());
+        UString envStr = L"FZF_DEFAULT_COMMAND=rg --hidden --no-ignore -l --max-depth 5 \"\"";
+        auto env = CRecordVector<WCHAR>(envStr.Ptr(), envStr.Ptr() + envStr.Len() + 1); // Include null terminator
+        env.Add(0);
+
+        findProc->Create(L"fzf.exe", L"", cwd, (LPVOID)env.begin());
+        // findProc->Create(L"conhost", L"cmd /c fzf.exe", cwd, (LPVOID)env.begin());
+
         // to test
         // findProc->Create(L"cmd.exe", L"", cwd, (LPVOID)env.Ptr());
         // findProc->Create(L"conhost", L"fzf.exe", cwd);
