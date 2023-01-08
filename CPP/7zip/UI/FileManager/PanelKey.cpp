@@ -375,7 +375,7 @@ bool CPanel::OnKeyDown(LPNMLVKEYDOWN keyDownInfo, LRESULT &result)
         auto cwd = GetFsPath();
         auto findProc = new CProcess();
         findProc->_overlapWindow = TRUE;
-        findProc->_readStdout = TRUE;
+        findProc->_readOutput = TRUE;
 
         // Doubly null terminated string, last null is for list of null terminated strings.
         // If you're setting this in shell it would be
@@ -384,13 +384,47 @@ bool CPanel::OnKeyDown(LPNMLVKEYDOWN keyDownInfo, LRESULT &result)
         auto env = CRecordVector<WCHAR>(envStr.Ptr(), envStr.Ptr() + envStr.Len() + 1); // Include null terminator
         env.Add(0);
 
-        findProc->Create(L"fzf.exe", L"", cwd, (LPVOID)env.begin());
-        // findProc->Create(L"conhost", L"cmd /c fzf.exe", cwd, (LPVOID)env.begin());
+        UString pipeName = MyGetNextPipeName();
+        int backSlash = pipeName.ReverseFind_PathSepar();
+        constexpr WCHAR cmdTemplate[] = LR"(
+powershell -command " & { $output = fzf;
+$pipeName = '%s';
+$npipeClient = new-object System.IO.Pipes.NamedPipeClientStream('.', $pipeName, [System.IO.Pipes.PipeDirection]::Out,
+  [System.IO.Pipes.PipeOptions]::None,
+	[System.Security.Principal.TokenImpersonationLevel]::Impersonation);
+$npipeClient.Connect();
+$script:pipeWriter = new-object System.IO.StreamWriter($npipeClient);
+$pipeWriter.AutoFlush = $true;
+$pipeWriter.WriteLine($output);
+$pipeWriter.Close(); }"
+        )";
+        WCHAR cmd[4096]{};
+        #pragma warning (disable : 4774 )
+        _snwprintf_s(cmd, ARRAYSIZE(cmd), ARRAYSIZE(cmd), cmdTemplate, pipeName.Ptr() + backSlash + 1);
+
+        // No newlines allowed.
+        for (auto & ch : cmd)
+        {
+          if (ch == '\n')
+          {
+            ch = ' ';
+          }
+        }
+
+
+        // Use conhost, it's faster.
+        findProc->_createPipeOnly = TRUE;
+        findProc->Create(L"conhost", cmd, cwd, (LPVOID)env.begin());
+
+        // Use default terminal, need to set
+        // findProc->_createPipeOnly = FALSE
+        // findProc->Create(L"fzf.exe", L"", cwd, (LPVOID)env.begin());
 
         // to test
         // findProc->Create(L"cmd.exe", L"", cwd, (LPVOID)env.Ptr());
         // findProc->Create(L"conhost", L"fzf.exe", cwd);
         // findProc->Create(L"conhost", L"powershell -noexit -command fzf.exe", cwd);
+        // findProc->Create(L"conhost", L"powershell -command \" & { $output = fzf; [Console]::Error.WriteLine($output) }\"", cwd, (LPVOID)env.begin());
 
         auto that = this;
         if (findProc->WaitAndRun([that, cwd](UString path)

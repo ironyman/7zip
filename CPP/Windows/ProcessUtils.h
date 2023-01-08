@@ -68,7 +68,8 @@ public:
   CByteVector _readBuffer;
   BOOL _deleteSelf{};
   BOOL _overlapWindow{};
-  BOOL _readStdout{};
+  BOOL _readOutput{};
+  BOOL _createPipeOnly{};
 
   CProcess() : _hStdoutRead(NULL), _hStdoutWrite(NULL) {}
   virtual ~CProcess()
@@ -178,6 +179,7 @@ public:
   WRes WaitAndRunOverlapped(std::function<void(UString)> const& fn);
 };
 
+UString MyGetNextPipeName();
 WRes MyCreateProcess(LPCWSTR imageName, const UString &params);
 
 }
