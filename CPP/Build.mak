@@ -62,7 +62,7 @@ CFLAGS_WARN_LEVEL = -W4
 CFLAGS_WARN_LEVEL = -Wall
 !ENDIF
 
-CFLAGS = $(CFLAGS) -nologo -c -Fo$O/ $(CFLAGS_WARN_LEVEL) -WX -EHsc -Gy -GR- -GF
+CFLAGS = $(CFLAGS) -nologo -c -Fo$O/ $(CFLAGS_WARN_LEVEL) -EHsc -Gy -GR- -GF /Zi
 
 !IF "$(CC)" == "clang-cl"
 
@@ -224,6 +224,6 @@ predef: empty.c
 predef2: A.cpp
 	$(COMPL)   -EP -Zc:preprocessor -PD
 predef3: A.cpp
-	$(COMPL)   -E -dM 
+	$(COMPL)   -E -dM
 predef4: A.cpp
 	$(COMPL_O2)   -E
