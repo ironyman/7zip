@@ -66,6 +66,7 @@ DECLARE_INTERFACE(CPanelCallback)
 {
   virtual void OnTab() = 0;
   virtual void SetFocusToPath(unsigned index) = 0;
+  virtual void SetFocusToPathNoDropDown() = 0;
   virtual void OnCopy(bool move, bool copyToSame) = 0;
   virtual void OnSetSameFolder() = 0;
   virtual void OnSetSubFolder() = 0;
@@ -270,7 +271,7 @@ struct CCopyToOptions
 
   CVirtFileSystem *VirtFileSystemSpec;
   ISequentialOutStream *VirtFileSystem;
-  
+
   CCopyToOptions():
       streamMode(false),
       moveMode(false),
@@ -284,7 +285,7 @@ struct CCopyToOptions
       VirtFileSystem(NULL)
       {}
 };
-  
+
 
 
 struct COpenResult
@@ -322,9 +323,9 @@ class CPanel Z7_final: public NWindows::NControl::CWindow2
   void AddComboBoxItem(const UString &name, int iconIndex, int indent, bool addToList);
 
   bool OnComboBoxCommand(UINT code, LPARAM param, LRESULT &result);
-  
+
   #ifndef UNDER_CE
-  
+
   LRESULT OnNotifyComboBoxEnter(const UString &s);
   bool OnNotifyComboBoxEndEdit(PNMCBEENDEDITW info, LRESULT &result);
   #ifndef _UNICODE
@@ -361,13 +362,13 @@ public:
 private:
 
   void ChangeWindowSize(int xSize, int ySize);
- 
+
   HRESULT InitColumns();
   void DeleteColumn(unsigned index);
   void AddColumn(const CPropColumn &prop);
 
   void SetFocusedSelectedItem(int index, bool select);
-  
+
   void OnShiftSelectMessage();
   void OnArrowWithShift();
 
@@ -453,7 +454,7 @@ public:
     */
     return (UInt32)item.lParam;
   }
-  
+
   unsigned GetRealItemIndex(int indexInListView) const
   {
     /*
@@ -481,10 +482,10 @@ public:
 
 
   UString _currentFolderPrefix;
-  
+
   CObjectVector<CFolderLink> _parentFolders;
   NWindows::NDLL::CLibrary _library;
-  
+
   CMyComPtr<IFolderFolder> _folder;
   CBoolVector _isDirVector;
   CMyComPtr<IFolderCompare> _folderCompare;
@@ -514,7 +515,7 @@ public:
   // UInt32 GetItem_Attrib(UInt32 itemIndex) const;
 
   bool GetItem_BoolProp(UInt32 itemIndex, PROPID propID) const;
-  
+
   bool IsItem_Deleted(unsigned itemIndex) const;
   bool IsItem_Folder(unsigned itemIndex) const;
   bool IsItem_AltStream(unsigned itemIndex) const;
@@ -539,10 +540,10 @@ public:
   HRESULT BindToPath(const UString &fullPath, const UString &arcFormat, COpenResult &openRes); // can be prefix
   HRESULT BindToPathAndRefresh(const UString &path);
   void OpenDrivesFolder();
-  
+
   void SetBookmark(unsigned index);
   void OpenBookmark(unsigned index);
-  
+
   void LoadFullPath();
   void LoadFullPathAndShow();
   void FoldersHistory();
@@ -612,10 +613,10 @@ public:
   bool _needSaveInfo;
   UString _typeIDString;
   CListViewInfo _listViewInfo;
-  
+
   CPropColumns _columns;
   CPropColumns _visibleColumns;
-  
+
   PROPID _sortID;
   // int _sortIndex;
   bool _ascending;
@@ -635,27 +636,27 @@ public:
 
   CMyComPtr<IContextMenu> _sevenZipContextMenu;
   CMyComPtr<IContextMenu> _systemContextMenu;
-  
+
   HRESULT CreateShellContextMenu(
       const CRecordVector<UInt32> &operatedIndices,
       CMyComPtr<IContextMenu> &systemContextMenu);
-  
+
   void CreateSystemMenu(HMENU menu,
       bool showExtendedVerbs,
       const CRecordVector<UInt32> &operatedIndices,
       CMyComPtr<IContextMenu> &systemContextMenu);
-  
+
   void CreateSevenZipMenu(HMENU menu,
       bool showExtendedVerbs,
       const CRecordVector<UInt32> &operatedIndices,
       int firstDirIndex,
       CMyComPtr<IContextMenu> &sevenZipContextMenu);
-  
+
   void CreateFileMenu(HMENU menu,
       CMyComPtr<IContextMenu> &sevenZipContextMenu,
       CMyComPtr<IContextMenu> &systemContextMenu,
       bool programMenu);
-  
+
   void CreateFileMenu(HMENU menu);
   bool InvokePluginCommand(unsigned id);
   bool InvokePluginCommand(unsigned id, IContextMenu *sevenZipContextMenu,
@@ -673,7 +674,7 @@ public:
   bool _selectMark;
   int _prevFocusedItem;
 
- 
+
   // void SortItems(int index);
   void SortItemsWithPropID(PROPID propID);
 
@@ -685,7 +686,7 @@ public:
   void KillSelection();
 
   UString GetFolderTypeID() const;
-  
+
   bool IsFolderTypeEqTo(const char *s) const;
   bool IsRootFolder() const;
   bool IsFSFolder() const;
@@ -693,7 +694,7 @@ public:
   bool IsAltStreamsFolder() const;
   bool IsArcFolder() const;
   bool IsHashFolder() const;
-  
+
   /*
     c:\Dir
     Computer\
@@ -713,7 +714,7 @@ public:
   // bool IsFsOrDrivesFolder() const { return IsFSFolder() || IsFSDrivesFolder(); }
   bool IsDeviceDrivesPrefix() const { return _currentFolderPrefix == L"\\\\.\\"; }
   bool IsSuperDrivesPrefix() const { return _currentFolderPrefix == L"\\\\?\\"; }
-  
+
   /*
     c:\Dir
     Computer\
@@ -756,7 +757,7 @@ public:
 
     bool _processTimer;
     CPanel &_panel;
-   
+
     public:
 
     CDisableTimerProcessing(CPanel &panel): _panel(panel) { Disable(); }
@@ -778,7 +779,7 @@ public:
 
     bool _processTimer;
     CPanel *_panel;
-   
+
     public:
 
     CDisableTimerProcessing2(CPanel *panel): _processTimer(true), _panel(panel) { Disable(); }
@@ -837,7 +838,7 @@ public:
 
   HRESULT RefreshListCtrl();
 
-  
+
   // void MessageBox_Info(LPCWSTR message, LPCWSTR caption) const;
   // void MessageBox_Warning(LPCWSTR message) const;
   void MessageBox_Error_Caption(LPCWSTR message, LPCWSTR caption) const;
@@ -861,7 +862,7 @@ public:
 
   void OpenFolder(unsigned index);
   HRESULT OpenParentArchiveFolder();
-  
+
   HRESULT OpenAsArc(IInStream *inStream,
       const CTempFileInfo &tempFileInfo,
       const UString &virtualFilePath,
@@ -874,17 +875,17 @@ public:
       const UString &arcFormat
       // , bool showErrorMessage
       );
-  
+
   HRESULT OpenAsArc_Name(const UString &relPath, const UString &arcFormat
       // , bool showErrorMessage
       );
   HRESULT OpenAsArc_Index(unsigned index, const wchar_t *type /* = NULL */
       // , bool showErrorMessage
       );
-  
+
   void OpenItemInArchive(unsigned index, bool tryInternal, bool tryExternal,
       bool editMode, bool useEditor, const wchar_t *type = NULL);
-  
+
   HRESULT OnOpenItemChanged(UInt32 index, const wchar_t *fullFilePath, bool usePassword, const UString &password);
   LRESULT OnOpenItemChanged(LPARAM lParam);
 
@@ -910,7 +911,7 @@ public:
   {
     AutoRefresh_Mode = mode;
   }
-  
+
   void Post_Refresh_StatusBar();
   void Refresh_StatusBar();
 
@@ -996,7 +997,7 @@ public:
   bool _needExit;
   CRecordVector< ::CThread > _threads;
   unsigned _numActiveThreads;
-    
+
   CExitEventLauncher()
   {
     _needExit = false;

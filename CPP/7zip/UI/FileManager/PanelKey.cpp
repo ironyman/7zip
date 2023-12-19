@@ -323,6 +323,15 @@ bool CPanel::OnKeyDown(LPNMLVKEYDOWN keyDownInfo, LRESULT &result)
         return true;
       }
       return false;
+    case 'L':
+      {
+        //MessageBox(0, g_App.LastFocusedPanel == 0? L"hi" : L"BYE", L"HI", 0);
+        if (ctrl)
+        {
+          _panelCallback->SetFocusToPathNoDropDown();
+          return true;
+        }
+      }
     case 'Z':
       if (ctrl)
       {

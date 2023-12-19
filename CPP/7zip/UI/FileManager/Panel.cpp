@@ -328,6 +328,15 @@ LRESULT CMyComboBoxEdit::OnMessage(UINT message, WPARAM wParam, LPARAM lParam)
           }
           break;
         }
+        case 'L':
+        {
+          bool ctrl = IsKeyDown(VK_CONTROL);
+          if (ctrl)
+          {
+            _panel->_panelCallback->SetFocusToPathNoDropDown();
+          }
+          break;
+        }
       }
       break;
     case WM_CHAR:
@@ -433,7 +442,7 @@ bool CPanel::OnCreate(CREATESTRUCT * /* createStruct */)
   _listView.Show(SW_SHOW);
   _listView.InvalidateRect(NULL, true);
   _listView.Update();
-  
+
   // Ensure that the common control DLL is loaded.
   INITCOMMONCONTROLSEX icex;
 
@@ -456,7 +465,7 @@ bool CPanel::OnCreate(CREATESTRUCT * /* createStruct */)
     icex.dwSize = sizeof(INITCOMMONCONTROLSEX);
     icex.dwICC  = ICC_COOL_CLASSES | ICC_BAR_CLASSES;
     InitCommonControlsEx(&icex);
-    
+
     // if there is no CCS_NOPARENTALIGN, there is space of some pixels after rebar (Incorrect GetWindowRect ?)
 
     _headerReBar.Attach(::CreateWindowEx(WS_EX_TOOLWINDOW,
@@ -498,7 +507,7 @@ bool CPanel::OnCreate(CREATESTRUCT * /* createStruct */)
   icex.dwICC = ICC_USEREX_CLASSES;
   InitCommonControlsEx(&icex);
   #endif
-  
+
   _headerComboBox.CreateEx(0,
       #ifdef UNDER_CE
       WC_COMBOBOXW
@@ -549,13 +558,13 @@ bool CPanel::OnCreate(CREATESTRUCT * /* createStruct */)
     rbi.fMask  = 0;
     rbi.himl   = (HIMAGELIST)NULL;
     _headerReBar.SetBarInfo(&rbi);
-    
+
     // Send the TB_BUTTONSTRUCTSIZE message, which is required for
     // backward compatibility.
     // _headerToolBar.SendMessage(TB_BUTTONSTRUCTSIZE, (WPARAM)sizeof(TBBUTTON), 0);
     SIZE size;
     _headerToolBar.GetMaxSize(&size);
-    
+
     REBARBANDINFO rbBand;
     memset(&rbBand, 0, sizeof(rbBand));
     // rbBand.cbSize = sizeof(rbBand);  // for debug
@@ -597,7 +606,7 @@ bool CPanel::OnCreate(CREATESTRUCT * /* createStruct */)
 
   // InitListCtrl();
   RefreshListCtrl();
-  
+
   return true;
 }
 
@@ -624,10 +633,10 @@ void CPanel::ChangeWindowSize(int xSize, int ySize)
 
   _statusBar.GetWindowRect(&rect);
   kStatusBarSize = RECT_SIZE_Y(rect);
-  
+
   // _statusBar2.GetWindowRect(&rect);
   // kStatusBar2Size = RECT_SIZE_Y(rect);
- 
+
   int yListViewSize = MyMax(ySize - kHeaderSize - kStatusBarSize, 0);
   const int kStartXPos = 32;
   if (_headerReBar)
@@ -1032,7 +1041,7 @@ void CPanel::ExtractArchives()
   else
     outFolder += '*';
   outFolder.Add_PathSepar();
-  
+
   CContextMenuInfo ci;
   ci.Load();
 
@@ -1146,20 +1155,20 @@ void CPanel::TestArchives()
       return;
 
     extracter.Indices = indices;
-    
+
     const UString title = LangString(IDS_PROGRESS_TESTING);
-    
+
     extracter.ProgressDialog.CompressingMode = false;
     extracter.ProgressDialog.MainWindow = GetParent();
     extracter.ProgressDialog.MainTitle = "7-Zip"; // LangString(IDS_APP_TITLE);
     extracter.ProgressDialog.MainAddTitle = title + L' ';
-    
+
     extracter.ExtractCallbackSpec->OverwriteMode = NExtract::NOverwriteMode::kAskBefore;
     extracter.ExtractCallbackSpec->Init();
-    
+
     if (extracter.Create(title, GetParent()) != S_OK)
       return;
-    
+
     }
     RefreshTitleAlways();
     return;

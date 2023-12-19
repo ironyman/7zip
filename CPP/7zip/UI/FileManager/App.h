@@ -42,6 +42,8 @@ public:
   }
   virtual void OnTab() Z7_override;
   virtual void SetFocusToPath(unsigned index) Z7_override;
+  virtual void SetFocusToPathNoDropDown();
+
   virtual void OnCopy(bool move, bool copyToSame) Z7_override;
   virtual void OnSetSameFolder() Z7_override;
   virtual void OnSetSubFolder() Z7_override;
@@ -84,7 +86,7 @@ public:
   CMyComPtr<IDropTarget> _dropTarget;
 
   UString LangString_N_SELECTED_ITEMS;
-  
+
   void ReloadLangItems();
 
   CApp():
@@ -100,7 +102,7 @@ public:
   void SetFocusedPanel(unsigned index);
   void DragBegin(unsigned panelIndex);
   void DragEnd();
-  
+
   void OnCopy(bool move, bool copyToSame, unsigned srcPanelIndex);
   void OnSetSameFolder(unsigned srcPanelIndex);
   void OnSetSubFolder(unsigned srcPanelIndex);
@@ -131,14 +133,14 @@ public:
 
   void DiffFiles(const UString &path1, const UString &path2);
   void DiffFiles();
-  
+
   void VerCtrl(unsigned id);
 
   void Split();
   void Combine();
   void Properties() { GetFocusedPanel().Properties(); }
   void Comment() { GetFocusedPanel().ChangeComment(); }
-  
+
   #ifndef UNDER_CE
   void Link();
   void OpenAltStreams() { GetFocusedPanel().OpenAltStreams(); }
@@ -195,7 +197,7 @@ public:
 
   void SetListSettings();
   HRESULT SwitchOnOffOnePanel();
-  
+
   CIntVector _timestampLevels;
 
   bool GetFlatMode() { return Panels[LastFocusedPanel].GetFlatMode(); }
@@ -214,7 +216,7 @@ public:
   }
 
   // bool Get_ShowNtfsStrems_Mode() { return Panels[LastFocusedPanel].Get_ShowNtfsStrems_Mode(); }
-  
+
   void ChangeFlatMode() { Panels[LastFocusedPanel].ChangeFlatMode(); }
   // void Change_ShowNtfsStrems_Mode() { Panels[LastFocusedPanel].Change_ShowNtfsStrems_Mode(); }
   // void Change_ShowDeleted() { ShowDeletedFiles = !ShowDeletedFiles; }
@@ -265,7 +267,7 @@ public:
     if (ShowArchiveToolbar) mask |= 8;
     SaveToolbarsMask(mask);
   }
-  
+
   void SaveToolbarChanges();
 
   void SwitchStandardToolbar()
