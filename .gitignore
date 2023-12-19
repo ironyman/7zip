@@ -6,3 +6,4 @@
 *.lib
 *.sfx
 resource.res
+*.pdb
