@@ -19,7 +19,10 @@
             "args": [
             ],
             "options": {
-                "cwd": "${workspaceFolder}/CPP/7zip"
+                "cwd": "${workspaceFolder}/CPP/7zip",
+                "env": {
+                    "CL": "/MP"
+                }
             },
             "group": {
                 "kind": "build",
