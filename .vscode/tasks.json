@@ -1,0 +1,72 @@
+{
+    "version": "2.0.0",
+    "options": {
+        // https://stackoverflow.com/questions/52459661/visual-studio-code-task-build-c-program-is-not-recognized
+        "shell": {
+            "executable": "${env:windir}\\System32\\cmd.exe",
+            "args": [
+                "/d", "/c",
+                "\"C:\\Program Files\\Microsoft Visual Studio\\2022\\Enterprise\\VC\\Auxiliary\\Build\\vcvars64.bat\"",
+                "&&"
+            ]
+        }
+    },
+    "tasks": [
+        {
+            "label": "build",
+            "type": "shell",
+            "command": "nmake",
+            "args": [
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/CPP/7zip"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": {
+                "owner": "cpp",
+                "fileLocation": ["relative", "${workspaceFolder}"],
+                "pattern": [
+                    {
+                        // Regular expression to match filename (on earlier line than actual warnings)
+                        "regexp": "^([^\\(\\)]+)\\([0-9]+\\):(.*)$",
+                        "kind": "location",
+                        "file": 1,
+                        "line": 2,
+                        "message": 3
+                    },
+                ]
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false,
+            }
+        },
+        {
+            "label": "Build Test",
+            "type": "shell",
+            "command": "cl",
+            "args": [
+                "/MDd",
+                "/W4",
+                "/EHsc",
+                "/ZI",
+                "/std:c++11",
+                "/Od",
+                "/Fe:${workspaceFolder}/Debug/test.exe",
+                "/Fd:${workspaceFolder}/Debug/",
+                "/Fo:${workspaceFolder}/Debug/",
+                "main.cpp"
+            ],
+            "group": {
+                "kind": "build",
+            }
+        },
+    ]
+}
