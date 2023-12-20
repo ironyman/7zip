@@ -33,6 +33,8 @@
 
 #include "PropertyNameRes.h"
 
+#include <Shlwapi.h>
+
 using namespace NWindows;
 using namespace NControl;
 
@@ -535,6 +537,9 @@ bool CPanel::OnCreate(CREATESTRUCT * /* createStruct */)
       LONG_PTR(ComboBoxSubclassProc));
   */
   _comboBoxEdit.Attach(_headerComboBox.GetEditControl());
+
+  // Turn file path auto completion.
+  SHAutoComplete(_headerComboBox.GetEditControl(), SHACF_FILESYSTEM | SHACF_AUTOSUGGEST_FORCE_ON);
 
   // _comboBoxEdit.SendMessage(CCM_SETUNICODEFORMAT, (WPARAM)(BOOL)TRUE, 0);
 
