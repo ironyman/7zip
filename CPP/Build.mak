@@ -1,3 +1,4 @@
+LFLAGS = $(LFLAGS) /debug
 LIBS = $(LIBS) oleaut32.lib ole32.lib
 
 !IFNDEF MY_NO_UNICODE
@@ -62,7 +63,7 @@ CFLAGS_WARN_LEVEL = -W4
 CFLAGS_WARN_LEVEL = -Wall
 !ENDIF
 
-CFLAGS = $(CFLAGS) -nologo -c -Fo$O/ $(CFLAGS_WARN_LEVEL) -EHsc -Gy -GR- -GF /Zi
+CFLAGS = $(CFLAGS) -nologo -c -Fo$O/ $(CFLAGS_WARN_LEVEL) -EHsc -Gy -GR- -GF
 
 !IF "$(CC)" == "clang-cl"
 
