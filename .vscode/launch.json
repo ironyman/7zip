@@ -7,10 +7,20 @@
         {
             "type": "lldb",
             "request": "launch",
+            "name": "Debug 7zfm",
+            "program": "${workspaceFolder}/CPP/7zip/UI/FileManager/x64/7zfm.exe",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "preLaunchTask": "build 7zfm"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
             "name": "Debug",
             "program": "${workspaceFolder}/CPP/7zip/Bundles/fm/x64/7zfm.exe",
             "args": [],
-            "cwd": "${workspaceFolder}"
+            "cwd": "${workspaceFolder}",
+            "preLaunchTask": "build 7zip"
         }
     ]
 }

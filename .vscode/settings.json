@@ -1,5 +1,6 @@
 {
-    "terminal.integrated.defaultProfile.windows": "VSDev_PowerShell",
+    "terminal.integrated.defaultProfile.windows": "VsDevCmd (2022)",
+    "note": "for some reason builds with powershell fails to continue building in cmd",
     "terminal.integrated.profiles.windows": {
         "VSDev_PowerShell": {
             "args": [
@@ -34,5 +35,8 @@
         ],
         "overrideName": true,
         "icon": "terminal-cmd"
+    },
+    "files.associations": {
+        "xstring": "cpp"
     }
 }
