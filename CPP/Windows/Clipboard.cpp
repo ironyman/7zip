@@ -126,5 +126,65 @@ bool ClipboardSetText(HWND owner, const UString &s)
   #endif
   return res;
 }
- 
+
+void ClipboardSetFiles(const std::vector<std::wstring>& filePaths)
+{
+  // Open the clipboard
+  if (!OpenClipboard(nullptr))
+  {
+    return;
+  }
+  // Clear the clipboard
+  EmptyClipboard();
+
+  // Allocate memory for the DROPFILES structure
+  size_t fileBufferSize = 0;
+  for (const auto &filePath : filePaths)
+  {
+    fileBufferSize += filePath.length() + 1;
+  }
+  // For the second null terminator.
+  fileBufferSize += 1;
+
+  HGLOBAL hGlobal = GlobalAlloc(GMEM_MOVEABLE | GHND | GMEM_SHARE, sizeof(DROPFILES) + fileBufferSize * sizeof(wchar_t));
+  if (hGlobal == nullptr)
+  {
+    return;
+  }
+
+  // from #include <ShlObj.h>
+  DROPFILES *dropFiles = static_cast<DROPFILES *>(GlobalLock(hGlobal));
+  if (dropFiles == nullptr)
+  {
+    return;
+  }
+  dropFiles->pFiles = sizeof(DROPFILES);
+  dropFiles->pt.x = 0;
+  dropFiles->pt.y = 0;
+  dropFiles->fNC = FALSE;
+  dropFiles->fWide = TRUE;
+
+  wchar_t *fileBuffer = reinterpret_cast<wchar_t *>(dropFiles + 1);
+  wchar_t *fileBufferPos = fileBuffer;
+  for (const auto &filePath : filePaths)
+  {
+    int ret = wcsncpy_s(fileBufferPos, fileBufferSize - (fileBufferPos - fileBuffer),
+              filePath.c_str(), filePath.length());
+    if (ret != 0)
+    {
+      MessageBox(0, L"HI", L"HI", 0);
+    }
+    fileBufferPos += filePath.length() + 1;
+  }
+  // __debugbreak();
+  fileBufferPos[0] = '\0';
+  GlobalUnlock(hGlobal);
+
+  // Set the clipboard data
+  SetClipboardData(CF_HDROP, hGlobal);
+
+  // Close the clipboard
+  CloseClipboard();
+}
+
 }

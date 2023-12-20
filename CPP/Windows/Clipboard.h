@@ -4,6 +4,8 @@
 #define ZIP7_INC_CLIPBOARD_H
 
 #include "../Common/MyString.h"
+#include <vector>
+#include <string>
 
 namespace NWindows {
 
@@ -22,6 +24,7 @@ bool ClipboardIsFormatAvailableHDROP();
 // bool ClipboardGetFileNames(UStringVector &names);
 // bool ClipboardGetTextString(AString &s);
 bool ClipboardSetText(HWND owner, const UString &s);
+void ClipboardSetFiles(const std::vector<std::wstring>& filePaths);
 
 }
 
