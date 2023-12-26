@@ -785,8 +785,8 @@ HRESULT CopyFileSystemItems(
 /* we don't use CFSFolder::CopyFrom() because the caller of CopyFrom()
    is optimized for IFolderArchiveUpdateCallback interface,
    but we want to use IFolderOperationsExtractCallback interface instead */
-
-Z7_COM7F_IMF(CFSFolder::CopyFrom(Int32 moveMode, const wchar_t * folderPrefix,
+// Not used yet.
+Z7_COM7F_IMF(CFSFolder::CopyFrom(Int32 moveMode, const wchar_t * /*folderPrefix*/,
     const wchar_t * const *itemsPaths, UInt32 numItems, IProgress *progress))
 {
   Z7_DECL_CMyComPtr_QI_FROM(

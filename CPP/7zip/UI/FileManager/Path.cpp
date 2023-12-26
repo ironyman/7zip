@@ -1,4 +1,3 @@
-#pragma once
 #include "StdAfx.h"
 #include <Shlwapi.h>
 #include "Path.h"

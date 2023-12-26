@@ -6,7 +6,6 @@
 #include "../Common/Common.h"
 #include "../Common/MyWindows.h"
 // https://learn.microsoft.com/en-gb/windows/win32/winprog/using-the-windows-headers?redirectedfrom=MSDN
-#define NTDDI_VERSION NTDDI_VISTA
 #if defined(__MINGW32__) || defined(__MINGW64__)
 #include <shlobj.h>
 #else

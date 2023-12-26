@@ -479,9 +479,9 @@ HRESULT CPanel::CopyFromFolder(bool moveMode, const UString &folderPrefix, const
   {
     if (!_parentFolders.IsEmpty())
     {
-      const CFolderLink &fl = _parentFolders.Back();
-//      updater.UpdateCallbackSpec->PasswordIsDefined = fl.UsePassword;
-//      updater.UpdateCallbackSpec->Password = fl.Password;
+      // const CFolderLink &fl = _parentFolders.Back();
+      // updater.UpdateCallbackSpec->PasswordIsDefined = fl.UsePassword;
+      // updater.UpdateCallbackSpec->Password = fl.Password;
     }
   }
 
@@ -523,6 +523,7 @@ HRESULT CPanel::CopyFromFolder(bool moveMode, const UString &folderPrefix, const
   return res;
 }
 
+// Not used yet.
 void CPanel::CopyFromFolderNoAsk(bool moveMode, const UStringVector &filePaths)
 {
   CDisableTimerProcessing disableTimerProcessing(*this);

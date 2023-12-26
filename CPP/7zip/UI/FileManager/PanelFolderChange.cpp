@@ -428,7 +428,7 @@ void CPanel::LoadFullPathAndShow()
 #ifndef UNDER_CE
 LRESULT CPanel::OnNotifyComboBoxEnter(const UString &s)
 {
-  auto path = ExpandEnvironmentStringsWrapper(std::wstring(s == L"~" ? L"%USERPROFILE%" : s));
+  auto path = ExpandEnvironmentStringsWrapper(std::wstring(s == L"~" ? L"%USERPROFILE%" : (const wchar_t *)s));
   if (path && BindToPathAndRefresh(GetUnicodeString(UString((*path).data()))) == S_OK)
   {
     PostMsg(kSetFocusToListView);
@@ -556,7 +556,7 @@ bool CPanel::OnComboBoxCommand(UINT code, LPARAM /* param */, LRESULT &result)
         if (info.Find(us2fs(sumPass)))
           attrib = info.Attrib;
         AddComboBoxItem(
-            name.IsEmpty() ? L"\\" : name,
+            name.IsEmpty() ? L"\\" : (const wchar_t *)name,
             GetRealIconIndex(us2fs(sumPass), attrib),
             (int)i, // iIndent
             false); // addToList
