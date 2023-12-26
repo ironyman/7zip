@@ -1953,8 +1953,9 @@ void CDropTarget::PositionCursor(const POINTL &ptl)
           {
             m_Panel = panel;
             m_IsAppTarget = false;
-            if ((int)i == SrcPanelIndex)
-              return; // we don't allow to drop to source panel
+
+            // if ((int)i == SrcPanelIndex)
+            //   return; // we don't allow to drop to source panel
             break;
           }
         }
