@@ -5,7 +5,6 @@
 #include "../Common/MyCom.h"
 #include "../Common/StringConvert.h"
 
-#include "COM.h"
 #include "FileName.h"
 #include "MemoryGlobal.h"
 #include "Shell.h"
@@ -170,7 +169,7 @@ static HRESULT ReadAnsiStrings(const char *p, size_t size, UStringVector &names)
 
 #define INIT_FORMATETC_HGLOBAL(type) { (type), NULL, DVASPECT_CONTENT, -1, TYMED_HGLOBAL }
 
-static HRESULT DataObject_GetData_HGLOBAL(IDataObject *dataObject, CLIPFORMAT cf, NCOM::CStgMedium &medium)
+HRESULT DataObject_GetData_HGLOBAL(IDataObject *dataObject, CLIPFORMAT cf, NCOM::CStgMedium &medium)
 {
   FORMATETC etc = INIT_FORMATETC_HGLOBAL(cf);
   RINOK(dataObject->GetData(&etc, &medium))
@@ -179,11 +178,17 @@ static HRESULT DataObject_GetData_HGLOBAL(IDataObject *dataObject, CLIPFORMAT cf
   return S_OK;
 }
 
+HRESULT DataObject_SetData_HGLOBAL(IDataObject *dataObject, CLIPFORMAT cf, NCOM::CStgMedium &medium)
+{
+  FORMATETC etc = INIT_FORMATETC_HGLOBAL(cf);
+  RINOK(dataObject->SetData(&etc, &medium, TRUE));
+}
+
 static HRESULT DataObject_GetData_HDROP_Names(IDataObject *dataObject, UStringVector &names)
 {
   names.Clear();
   NCOM::CStgMedium medium;
-  
+
   /* Win10 : if (dataObject) is from IContextMenu::Initialize() and
     if (len_of_path >= MAX_PATH (260) for some file in data object)
     {
@@ -276,7 +281,7 @@ static HRESULT DataObject_GetData_IDLIST(IDataObject *dataObject, UStringVector 
     RINOK(::SHGetDesktopFolder(&desktopFolder))
     if (!desktopFolder)
       return E_FAIL;
-    
+
     LPCITEMIDLIST const lpcItem = (LPCITEMIDLIST)(const void *)((const Byte *)cida + offset);
 
    #ifdef SHOW_DEBUG_SHELL
@@ -294,16 +299,16 @@ static HRESULT DataObject_GetData_IDLIST(IDataObject *dataObject, UStringVector 
       }
     }
    #endif
-    
+
     RINOK(desktopFolder->BindToObject(lpcItem,
         NULL, IID_IShellFolder, (void **)&parentFolder))
     if (!parentFolder)
       return E_FAIL;
   }
-  
+
   names.ClearAndReserve(cida->cidl);
   UString path;
-  
+
   // for (int y = 0; y < 1; y++) // for debug
   for (unsigned i = 1; i <= cida->cidl; i++)
   {
@@ -522,7 +527,7 @@ void CDrop::QueryFileName(UINT fileIndex, UString &fileName)
 void CDrop::QueryFileNames(UStringVector &fileNames)
 {
   UINT numFiles = QueryCountOfFiles();
-  
+
   Print_Number(numFiles, "\n====== CDrop::QueryFileNames START ===== \n");
 
   fileNames.ClearAndReserve(numFiles);

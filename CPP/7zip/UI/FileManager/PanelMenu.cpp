@@ -447,6 +447,20 @@ void CPanel::Properties()
 void CPanel::EditCut()
 {
   // InvokeSystemCommand("cut");
+  UString s;
+  CRecordVector<UInt32> indices;
+  std::vector<std::wstring> files;
+  Get_ItemIndices_Selected(indices);
+  FOR_VECTOR (i, indices)
+  {
+    if (i != 0)
+      s += "\xD\n";
+    s += GetItemName(indices[i]);
+  // MessageBox(0, GetItemFullPath(indices[i]).Ptr(),GetItemFullPath(indices[i]).Ptr(),0);
+    files.push_back(GetItemFullPath(indices[i]).Ptr());
+  }
+  // ClipboardSetText(_mainWindow, s);
+  ClipboardSetFiles(_mainWindow, files, DROPEFFECT_MOVE);
 }
 
 void CPanel::EditCopy()
@@ -473,7 +487,7 @@ void CPanel::EditCopy()
     files.push_back(GetItemFullPath(indices[i]).Ptr());
   }
   // ClipboardSetText(_mainWindow, s);
-  ClipboardSetFiles(files);
+  ClipboardSetFiles(_mainWindow, files, DROPEFFECT_COPY);
 }
 
 void CPanel::EditPaste()
@@ -495,7 +509,33 @@ void CPanel::EditPaste()
   InvokeSystemCommand("paste");
 }
 
+void CPanel::EditPasteClipboard()
+{
+  UStringVector files;
+  // std::vector<std::wstring> files;
 
+  DWORD effect{};
+  ClipboardGetFiles(_mainWindow, files, effect);
+
+  // if (files.size() == 0)
+  //   return;
+
+  // for ( auto const& f : files)
+  // {
+  //   filesVec.Add(UString(f.c_str()));
+  // }
+  // CopyFromFolderNoAsk(false, filesVec);
+  CCopyToOptions options;
+  options.moveMode = (bool)(effect & DROPEFFECT_MOVE);
+  options.folder = GetFolderPath(_folder);
+  options.showErrorMessages = true;
+  options.NeedRegistryZone = false;
+  options.ZoneIdMode = NExtract::NZoneIdMode::kNone;
+  CopyFsItems(options,
+    files,
+    NULL // UStringVector *messages
+    );
+}
 
 struct CFolderPidls
 {

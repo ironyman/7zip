@@ -6,6 +6,8 @@
 #include <string.h>
 
 #include "Common.h"
+#include <type_traits>
+#include <iterator>
 
 const unsigned k_VectorSizeMax = ((unsigned)1 << 31) - 1;
 
@@ -15,7 +17,7 @@ class CRecordVector
   T *_items;
   unsigned _size;
   unsigned _capacity;
-  
+
   void MoveItems(unsigned destIndex, unsigned srcIndex)
   {
     memmove(_items + destIndex, _items + srcIndex, (size_t)(_size - srcIndex) * sizeof(T));
@@ -49,7 +51,7 @@ public:
   }
 
   CRecordVector(): _items(NULL), _size(0), _capacity(0) {}
-  
+
   CRecordVector(const CRecordVector &v): _items(NULL), _size(0), _capacity(0)
   {
     const unsigned size = v.Size();
@@ -62,10 +64,10 @@ public:
       memcpy(_items, v._items, (size_t)size * sizeof(T));
     }
   }
-  
+
   unsigned Size() const { return _size; }
   bool IsEmpty() const { return _size == 0; }
-  
+
   void ConstructReserve(unsigned size)
   {
     if (size != 0)
@@ -129,9 +131,9 @@ public:
     _items = p;
     _capacity = _size;
   }
-  
+
   ~CRecordVector() { delete []_items; }
-  
+
   void ClearAndFree()
   {
     delete []_items;
@@ -139,17 +141,17 @@ public:
     _size = 0;
     _capacity = 0;
   }
-  
+
   void Clear() { _size = 0; }
 
   void DeleteBack() { _size--; }
-  
+
   void DeleteFrom(unsigned index)
   {
     // if (index <= _size)
       _size = index;
   }
-  
+
   void DeleteFrontal(unsigned num)
   {
     if (num != 0)
@@ -210,7 +212,7 @@ public:
     }
     return *this;
   }
-  
+
   unsigned Add(const T item)
   {
     ReserveOnePosition();
@@ -472,6 +474,16 @@ public:
     for (unsigned i = 0; i < size; i++)
       AddInReserved(v[i]);
   }
+
+  template <class _Iter, std::enable_if_t<std::_Is_iterator_v<_Iter>, int> = 0>
+  CObjectVector(_Iter start, _Iter end)
+  {
+    while (start != end)
+    {
+      Add(*start++);
+    }
+  }
+
   CObjectVector& operator=(const CObjectVector &v)
   {
     if (&v == this)
@@ -498,7 +510,7 @@ public:
     }
     return *this;
   }
-  
+
   const T& operator[](unsigned index) const { return *((T *)_v[index]); }
         T& operator[](unsigned index)       { return *((T *)_v[index]); }
   const T& operator[](int index) const { return *((T *)_v[(unsigned)index]); }
@@ -507,7 +519,7 @@ public:
         T& Front()       { return operator[](0); }
   const T& Back() const  { return *(T *)_v.Back(); }
         T& Back()        { return *(T *)_v.Back(); }
-  
+
   void MoveToFront(unsigned index) { _v.MoveToFront(index); }
 
   unsigned Add(const T& item)
@@ -515,7 +527,7 @@ public:
     _v.ReserveOnePosition();
     return AddInReserved(item);
   }
-  
+
   unsigned AddInReserved(const T& item)
   {
     return _v.AddInReserved(new T(item));
@@ -534,8 +546,8 @@ public:
   #define VECTOR_ADD_NEW_OBJECT(v, a) \
     (v).ReserveOnePosition(); \
     (v).AddInReserved_Ptr_of_new(new a);
-  
-  
+
+
   T& AddNew()
   {
     _v.ReserveOnePosition();
@@ -543,20 +555,20 @@ public:
     _v.AddInReserved(p);
     return *p;
   }
-  
+
   T& AddNewInReserved()
   {
     T *p = new T;
     _v.AddInReserved(p);
     return *p;
   }
-  
+
   void Insert(unsigned index, const T& item)
   {
     _v.ReserveOnePosition();
     _v.InsertInReserved(index, new T(item));
   }
-  
+
   T& InsertNew(unsigned index)
   {
     _v.ReserveOnePosition();
@@ -570,20 +582,20 @@ public:
     for (unsigned i = _v.Size(); i != 0;)
       delete (T *)_v[--i];
   }
-  
+
   void ClearAndFree()
   {
     Clear();
     _v.ClearAndFree();
   }
-  
+
   void Clear()
   {
     for (unsigned i = _v.Size(); i != 0;)
       delete (T *)_v[--i];
     _v.Clear();
   }
-  
+
   void DeleteFrom(unsigned index)
   {
     const unsigned size = _v.Size();
@@ -631,7 +643,7 @@ public:
     return -1;
   }
   */
-  
+
   int FindInSorted(const T& item) const
   {
     unsigned left = 0, right = Size();

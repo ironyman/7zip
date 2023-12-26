@@ -19,6 +19,7 @@ public:
   operator T*() const {  return (T*)_p;  }
   // T& operator*() const {  return *_p; }
   T** operator&() { return &_p; }
+  T* get() { return _p; }
   T* operator->() const { return _p; }
   T* operator=(T* p)
   {
@@ -108,7 +109,7 @@ private:
   // CMyComBSTR(int nSize) { m_str = ::SysAllocStringLen(NULL, nSize); }
   // CMyComBSTR(int nSize, LPCOLESTR sz) { m_str = ::SysAllocStringLen(sz, nSize);  }
   // CMyComBSTR(const CMyComBSTR& src) { m_str = src.MyCopy(); }
-  
+
   /*
   CMyComBSTR(REFGUID src)
   {
@@ -118,7 +119,7 @@ private:
     CoTaskMemFree(szGuid);
   }
   */
-  
+
   /*
   CMyComBSTR& operator=(const CMyComBSTR& src)
   {
@@ -131,14 +132,14 @@ private:
     return *this;
   }
   */
-  
+
   CMyComBSTR& operator=(LPCOLESTR src)
   {
     ::SysFreeString(m_str);
     m_str = ::SysAllocString(src);
     return *this;
   }
-  
+
   unsigned Len() const { return ::SysStringLen(m_str); }
 
   BSTR MyCopy() const
@@ -153,7 +154,7 @@ private:
     return res;
     */
   }
-  
+
   /*
   void Attach(BSTR src) { m_str = src; }
   BSTR Detach()

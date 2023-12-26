@@ -37,6 +37,7 @@
         "icon": "terminal-cmd"
     },
     "files.associations": {
-        "xstring": "cpp"
+        "xstring": "cpp",
+        "xtr1common": "cpp"
     }
 }

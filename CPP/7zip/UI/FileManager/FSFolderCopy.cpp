@@ -41,22 +41,22 @@ HRESULT CCopyStateIO::MyCopyFile(CFSTR inPath, CFSTR outPath, DWORD attrib)
   {
     const size_t kBufSize = 1 << 16;
     CByteArr buf(kBufSize);
-    
+
     NIO::CInFile inFile;
     NIO::COutFile outFile;
-    
+
     if (!inFile.Open(inPath))
     {
       ErrorFileIndex = 0;
       return S_OK;
     }
-    
+
     if (!outFile.Create(outPath, true))
     {
       ErrorFileIndex = 1;
       return S_OK;
     }
-    
+
     for (;;)
     {
       UInt32 num;
@@ -67,7 +67,7 @@ HRESULT CCopyStateIO::MyCopyFile(CFSTR inPath, CFSTR outPath, DWORD attrib)
       }
       if (num == 0)
         break;
-      
+
       UInt32 written = 0;
       if (!outFile.Write(buf, num, written))
       {
@@ -91,7 +91,7 @@ HRESULT CCopyStateIO::MyCopyFile(CFSTR inPath, CFSTR outPath, DWORD attrib)
   /* SetFileAttrib("path:alt_stream_name") sets attributes for main file "path".
      But we don't want to change attributes of main file, when we write alt stream.
      So we need INVALID_FILE_ATTRIBUTES for alt stream here */
-  
+
   if (attrib != INVALID_FILE_ATTRIBUTES)
     SetFileAttrib(outPath, attrib);
 
@@ -103,7 +103,7 @@ HRESULT CCopyStateIO::MyCopyFile(CFSTR inPath, CFSTR outPath, DWORD attrib)
       return S_OK;
     }
   }
-  
+
   return S_OK;
 }
 
@@ -424,7 +424,7 @@ static HRESULT CopyFile_Ask(
       fs2us(destPath),
       &destPathResult,
       &writeAskResult))
-  
+
   if (IntToBool(writeAskResult))
   {
     FString destPathNew = us2fs((LPCOLESTR)destPathResult);
@@ -440,7 +440,7 @@ static HRESULT CopyFile_Ask(
 
       RINOK(state2.MyCopyFile(srcPath, destPathNew,
           state.IsAltStreamsDest ? INVALID_FILE_ATTRIBUTES: srcFileInfo.Attrib))
-      
+
       if (state2.ErrorFileIndex >= 0)
       {
         if (state2.ErrorMessage.IsEmpty())
@@ -535,7 +535,7 @@ static HRESULT CopyFolder(
 
   CEnumerator enumerator;
   enumerator.SetDirPrefix(CombinePath(srcPath, FString()));
-  
+
   for (;;)
   {
     NFind::CFileInfo fi;
@@ -567,7 +567,7 @@ static HRESULT CopyFolder(
       return E_ABORT;
     }
   }
-  
+
   return S_OK;
 }
 
@@ -658,7 +658,7 @@ Z7_COM7F_IMF(CFSFolder::CopyTo(Int32 moveMode, const UInt32 *indices, UInt32 num
       destPath2 += fi.Name;
     FString srcPath;
     GetFullPath(fi, srcPath);
-  
+
     if (fi.IsDir())
     {
       if (isAltDest)
@@ -752,7 +752,7 @@ HRESULT CopyFileSystemItems(
   {
     const UString path = itemsPaths[i];
     CFileInfo fi;
-  
+
     if (!fi.Find(us2fs(path)))
     {
       RINOK(SendMessageError(callback, "Cannot find the file", us2fs(path)))
@@ -761,7 +761,7 @@ HRESULT CopyFileSystemItems(
 
     FString destPath = destDirPrefix;
     destPath += fi.Name;
-  
+
     if (fi.IsDir())
     {
       if (isAltDest)
@@ -786,20 +786,22 @@ HRESULT CopyFileSystemItems(
    is optimized for IFolderArchiveUpdateCallback interface,
    but we want to use IFolderOperationsExtractCallback interface instead */
 
-Z7_COM7F_IMF(CFSFolder::CopyFrom(Int32 /* moveMode */, const wchar_t * /* fromFolderPath */,
-    const wchar_t * const * /* itemsPaths */, UInt32 /* numItems */, IProgress * /* progress */))
+Z7_COM7F_IMF(CFSFolder::CopyFrom(Int32 moveMode, const wchar_t * folderPrefix,
+    const wchar_t * const *itemsPaths, UInt32 numItems, IProgress *progress))
 {
-  /*
   Z7_DECL_CMyComPtr_QI_FROM(
       IFolderOperationsExtractCallback,
       callback, progress)
   if (!callback)
     return E_NOTIMPL;
-  return CopyFileSystemItems(_path,
-      moveMode, fromDirPrefix,
-      itemsPaths, numItems, callback);
-  */
-  return E_NOTIMPL;
+  // return CopyFileSystemItems(_path,
+  //     moveMode, fromDirPrefix,
+  //     itemsPaths, numItems, callback);
+
+  // UStringVector itemPathsVector(itemsPaths, itemsPaths + numItems);
+  CObjectVector<UString> itemPathsVector(itemsPaths, itemsPaths + numItems);
+  return CopyFileSystemItems(itemPathsVector, _path,
+      (bool)moveMode, callback);
 }
 
 Z7_COM7F_IMF(CFSFolder::CopyFromFile(UInt32 /* index */, const wchar_t * /* fullFilePath */, IProgress * /* progress */))

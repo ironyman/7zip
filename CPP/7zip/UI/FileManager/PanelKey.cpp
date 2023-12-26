@@ -297,7 +297,8 @@ bool CPanel::OnKeyDown(LPNMLVKEYDOWN keyDownInfo, LRESULT &result)
     case 'V':
       if (ctrl)
       {
-        EditPaste();
+        // EditPaste();
+        EditPasteClipboard();
         return true;
       }
       return false;

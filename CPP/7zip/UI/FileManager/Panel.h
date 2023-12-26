@@ -667,6 +667,7 @@ public:
   void EditCut();
   void EditCopy();
   void EditPaste();
+  void EditPasteClipboard();
 
   int _startGroupSelect;
 
@@ -957,8 +958,11 @@ public:
 
   HRESULT CopyFrom(bool moveMode, const UString &folderPrefix, const UStringVector &filePaths,
       bool showErrorMessages, UStringVector *messages);
+  HRESULT CopyFromFolder(bool moveMode, const UString &folderPrefix, const UStringVector &filePaths,
+    bool showErrorMessages, UStringVector *messages);
 
   void CopyFromNoAsk(bool moveMode, const UStringVector &filePaths);
+  void CopyFromFolderNoAsk(bool moveMode, const UStringVector &filePaths);
 
   void CompressDropFiles(
       const UStringVector &filePaths,

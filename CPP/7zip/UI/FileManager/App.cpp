@@ -60,7 +60,6 @@ void CPanelCallbackImp::SetFocusToPath(unsigned index)
 void CPanelCallbackImp::SetFocusToPathNoDropDown()
 {
   _app->RefreshTitle();
-  __debugbreak();
   _app->Panels[g_App.LastFocusedPanel]._headerComboBox.SetFocus();
 }
 
