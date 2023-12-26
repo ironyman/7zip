@@ -2699,7 +2699,9 @@ Z7_COMWF_B CDropTarget::Drop(IDataObject *dataObject, DWORD keyState,
         if (target.FolderType == k_FolderType_Fs)
         {
           CCopyToOptions options;
-          options.moveMode = moveMode;
+          // if (cmd == NDragMenu::k_AddToArc) earlier resets cmdEffect to copy for some reason
+          // but this panel is not an archive.
+          options.moveMode = (GetEffect(keyState, pt, 7) == DROPEFFECT_MOVE);
           options.folder = GetFolderPath(m_Panel->_folder);
           options.showErrorMessages = true;
           options.NeedRegistryZone = false;

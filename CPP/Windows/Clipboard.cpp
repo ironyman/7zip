@@ -230,7 +230,7 @@ HRESULT __stdcall DataObject::GetCanonicalFormatEtc(FORMATETC* /*pFormatEtc*/, F
 HRESULT __stdcall DataObject::SetData(FORMATETC* pFormatEtc, STGMEDIUM* pMedium, BOOL fRelease)
 {
   assert(fRelease == TRUE); //  return E_NOTIMPL;
-  // https://en.cppreference.com/w/cpp/language/aggregate_initialization
+  // https://en.cppreference.com/w/cpp/language/aggregate_initialization#Designated_initializers
   fmtetcs.emplace_back(FORMATETC{
     .cfFormat = pFormatEtc->cfFormat,
     .ptd = NULL,
@@ -300,7 +300,7 @@ void ClipboardSetFiles(HWND owner, const std::vector<std::wstring>& filePaths, D
   NCOM::CStgMedium medium;
   CMyComPtr<IDataObject> clipboardObject;
 
-  // HRESULT hr = S_OK;
+  HRESULT hr = S_OK;
   // hr = OleGetClipboard(&clipboardObject);
 
   // if (FAILED(hr))
@@ -349,10 +349,6 @@ void ClipboardSetFiles(HWND owner, const std::vector<std::wstring>& filePaths, D
   {
     int ret = wcsncpy_s(fileBufferPos, fileBufferSize - (fileBufferPos - fileBuffer),
               filePath.c_str(), filePath.length());
-    if (ret != 0)
-    {
-      MessageBox(0, L"HI", L"HI", 0);
-    }
     fileBufferPos += filePath.length() + 1;
   }
   // __debugbreak();
@@ -360,7 +356,6 @@ void ClipboardSetFiles(HWND owner, const std::vector<std::wstring>& filePaths, D
   GlobalUnlock(medium.hGlobal);
 
   clipboardObject = new DataObject(CF_HDROP, medium.hGlobal);
-
   // NShell::DataObject_SetData_HGLOBAL(clipboardObject.get(), CF_HDROP, medium);
 
   medium.hGlobal = NULL;
@@ -382,12 +377,13 @@ void ClipboardSetFiles(HWND owner, const std::vector<std::wstring>& filePaths, D
   GlobalUnlock(medium.hGlobal);
   pdwEffect = NULL;
 
-  // hr = NShell::DataObject_SetData_HGLOBAL(clipboardObject.get(), (CLIPFORMAT)
-  //     RegisterClipboardFormat(CFSTR_PREFERREDDROPEFFECT), medium);
-  // if (FAILED(hr))
-  // {
-  //   return;
-  // }
+  hr = NShell::DataObject_SetData_HGLOBAL(clipboardObject.get(), (CLIPFORMAT)
+      RegisterClipboardFormat(CFSTR_PREFERREDDROPEFFECT), medium);
+  if (FAILED(hr))
+  {
+    return;
+  }
+
   medium.hGlobal = NULL;
 
   OleSetClipboard(clipboardObject.get());
