@@ -59,7 +59,7 @@
                 "clean"
             ],
             "options": {
-                "cwd": "${workspaceFolder}/CPP/",
+                "cwd": "${workspaceFolder}/CPP/7zip/UI/FileManager",
             },
             "group": {
                 "kind": "build",
