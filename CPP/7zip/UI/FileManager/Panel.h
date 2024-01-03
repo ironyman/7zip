@@ -74,6 +74,13 @@ DECLARE_INTERFACE(CPanelCallback)
   virtual void DragBegin() = 0;
   virtual void DragEnd() = 0;
   virtual void RefreshTitle(bool always) = 0;
+  virtual HRESULT OnRefreshList(bool& shouldReturn) = 0;
+  virtual HRESULT OnBind(bool& shouldReturn) = 0;
+  virtual HRESULT OnSelectedItemChanged() = 0;
+  virtual HRESULT OnOpenFolder() = 0;
+  virtual HRESULT OnOpenParentFolder() = 0;
+  virtual UString OnSetComboText(UString const& text) = 0;
+
 };
 Z7_PURE_INTERFACES_END
 
@@ -302,7 +309,7 @@ struct COpenResult
 };
 
 
-
+class CApp;
 
 class CPanel Z7_final: public NWindows::NControl::CWindow2
 {
@@ -976,6 +983,10 @@ public:
   void RefreshTitleAlways() { RefreshTitle(true);  }
 
   UString GetItemsInfoString(const CRecordVector<UInt32> &indices);
+  void SetComboText(UString const& text);
+
+  // friend HRESULT CApp::InitializeMultiPanel();
+  friend class CApp;
 };
 
 class CMyBuffer

@@ -84,6 +84,16 @@ HRESULT CPanel::BindToPath(const UString &fullPath, const UString &arcFormat, CO
   openRes.ArchiveIsOpened = false;
   openRes.Encrypted = false;
 
+  if (_panelCallback != nullptr)
+  {
+    bool shouldReturn{};
+    _panelCallback->OnBind(shouldReturn);
+    if (shouldReturn)
+    {
+      return S_OK;
+    }
+  }
+
   CDisableTimerProcessing disableTimerProcessing(*this);
   CDisableNotify disableNotify(*this);
 
@@ -341,6 +351,7 @@ void CPanel::SetBookmark(unsigned index)
 void CPanel::OpenBookmark(unsigned index)
 {
   BindToPathAndRefresh(_appState->FastFolders.GetString(index));
+  _panelCallback->OnOpenFolder();
 }
 
 UString GetFolderPath(IFolderFolder *folder)
@@ -382,7 +393,7 @@ void CPanel::LoadFullPathAndShow()
   LoadFullPath();
   _appState->FolderHistory.AddString(_currentFolderPrefix);
 
-  _headerComboBox.SetText(_currentFolderPrefix);
+  SetComboText(_currentFolderPrefix);
 
   #ifndef UNDER_CE
 
@@ -432,6 +443,7 @@ LRESULT CPanel::OnNotifyComboBoxEnter(const UString &s)
   if (path && BindToPathAndRefresh(GetUnicodeString(UString((*path).data()))) == S_OK)
   {
     PostMsg(kSetFocusToListView);
+    _panelCallback->OnOpenFolder();
     return TRUE;
   }
   return FALSE;
@@ -441,7 +453,7 @@ bool CPanel::OnNotifyComboBoxEndEdit(PNMCBEENDEDITW info, LRESULT &result)
 {
   if (info->iWhy == CBENF_ESCAPE)
   {
-    _headerComboBox.SetText(_currentFolderPrefix);
+    SetComboText(_currentFolderPrefix);
     PostMsg(kSetFocusToListView);
     result = FALSE;
     return true;
@@ -472,7 +484,7 @@ bool CPanel::OnNotifyComboBoxEndEdit(PNMCBEENDEDIT info, LRESULT &result)
 {
   if (info->iWhy == CBENF_ESCAPE)
   {
-    _headerComboBox.SetText(_currentFolderPrefix);
+    SetComboText(_currentFolderPrefix);
     PostMsg(kSetFocusToListView);
     result = FALSE;
     return true;
@@ -600,7 +612,7 @@ bool CPanel::OnComboBoxCommand(UINT code, LPARAM /* param */, LRESULT &result)
       {
         UString pass = ComboBoxPaths[index];
         _headerComboBox.SetCurSel(-1);
-        // _headerComboBox.SetText(pass); // it's fix for seclecting by mouse.
+        // SetComboText(pass); // it's fix for seclecting by mouse.
         if (BindToPathAndRefresh(pass) == S_OK)
         {
           PostMsg(kSetFocusToListView);
@@ -786,6 +798,8 @@ void CPanel::OpenParentFolder()
   // ::SetCurrentDirectory(::_currentFolderPrefix);
   RefreshListCtrl(state);
   // _listView.EnsureVisible(_listView.GetFocusedItem(), false);
+
+  _panelCallback->OnOpenParentFolder();
 }
 
 
@@ -870,6 +884,8 @@ void CPanel::OpenFolder(unsigned index)
   // 17.02: fixed : now we don't select first item
   // _listView.SetItemState_Selected(_listView.GetFocusedItem());
   _listView.EnsureVisible(_listView.GetFocusedItem(), false);
+
+  _panelCallback->OnOpenFolder();
 }
 
 void CPanel::OpenAltStreams()
@@ -912,4 +928,17 @@ void CPanel::OpenAltStreams()
   path += ':';
   BindToPathAndRefresh(path);
   #endif
+}
+
+void CPanel::SetComboText(UString const& text)
+{
+  auto newText = _panelCallback->OnSetComboText(text);
+  if (newText.Len() > 0)
+  {
+    _headerComboBox.SetText(newText);
+  }
+  else
+  {
+    _headerComboBox.SetText(text);
+  }
 }

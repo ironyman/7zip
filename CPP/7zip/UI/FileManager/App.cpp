@@ -43,7 +43,7 @@ extern HINSTANCE g_hInstance;
 void CPanelCallbackImp::OnTab()
 {
   if (g_App.NumPanels != 1)
-    _app->Panels[1 - _index].SetFocusToList();
+    _app->Panels[(_index + 1) % kNumPanelsMax].SetFocusToList();
   _app->RefreshTitle();
 }
 
@@ -365,6 +365,11 @@ HRESULT CApp::Create(HWND hwnd, const UString &mainPath, const UString &arcForma
 
 HRESULT CApp::SwitchOnOffOnePanel()
 {
+  if (MultiPanelMode != 0)
+  {
+    UninitializeMultiPanel();
+  }
+
   if (NumPanels == 1)
   {
     NumPanels++;
@@ -383,6 +388,18 @@ HRESULT CApp::SwitchOnOffOnePanel()
   }
   MoveSubWindows();
   return S_OK;
+}
+
+HRESULT CApp::SwitchOnOffMultiPanel()
+{
+  if (MultiPanelMode == 0)
+  {
+    return InitializeMultiPanel();
+  }
+  else
+  {
+    return UninitializeMultiPanel();
+  }
 }
 
 void CApp::Save()
@@ -405,6 +422,7 @@ void CApp::Save()
   }
 
   listMode.Save();
+  SavePanelMode(MultiPanelMode);
   // Save_ShowDeleted(ShowDeletedFiles);
 }
 

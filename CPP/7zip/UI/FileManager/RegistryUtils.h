@@ -41,6 +41,8 @@ void SaveLockMemoryEnable(bool enable);
 
 void SaveFlatView(UInt32 panelIndex, bool enable);
 bool ReadFlatView(UInt32 panelIndex);
+void SavePanelMode(UInt32 mode);
+UInt32 ReadPanelMode();
 
 /*
 void Save_ShowDeleted(bool enable);

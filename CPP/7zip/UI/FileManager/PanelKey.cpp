@@ -79,6 +79,10 @@ bool CPanel::OnKeyDown(LPNMLVKEYDOWN keyDownInfo, LRESULT &result)
   {
     g_App.SwitchOnOffOnePanel();
   }
+  else if ((keyDownInfo->wVKey == VK_F9) && !alt && ctrl && !shift)
+  {
+    g_App.SwitchOnOffMultiPanel();
+  }
 
   if (keyDownInfo->wVKey >= VK_F3 && keyDownInfo->wVKey <= VK_F12 && ctrl)
   {

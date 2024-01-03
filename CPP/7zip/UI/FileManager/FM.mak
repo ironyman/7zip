@@ -70,6 +70,7 @@ FM_OBJS = \
   $O\SystemPage.obj \
   $O\VerCtrl.obj \
   $O\Path.obj \
+  $O\MultiPanel.obj \
 
 !IFNDEF UNDER_CE
 

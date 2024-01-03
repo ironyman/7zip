@@ -14,7 +14,7 @@ class CApp;
 extern CApp g_App;
 extern HWND g_HWND;
 
-const unsigned kNumPanelsMax = 2;
+const unsigned kNumPanelsMax = 3;
 
 extern bool g_IsSmallScreen;
 
@@ -34,11 +34,13 @@ class CPanelCallbackImp Z7_final: public CPanelCallback
 {
   CApp *_app;
   unsigned _index;
+  Int32 multiPanelReentrancyCount;
 public:
   void Init(CApp *app, unsigned index)
   {
     _app = app;
     _index = index;
+    multiPanelReentrancyCount = 0;
   }
   virtual void OnTab() Z7_override;
   virtual void SetFocusToPath(unsigned index) Z7_override;
@@ -51,6 +53,12 @@ public:
   virtual void DragBegin() Z7_override;
   virtual void DragEnd() Z7_override;
   virtual void RefreshTitle(bool always) Z7_override;
+  virtual HRESULT OnRefreshList(bool& shouldReturn) Z7_override;
+  virtual HRESULT OnBind(bool& shouldReturn) Z7_override;
+  virtual HRESULT OnSelectedItemChanged() Z7_override;
+  virtual HRESULT OnOpenFolder() Z7_override;
+  virtual HRESULT OnOpenParentFolder() Z7_override;
+  virtual UString OnSetComboText(UString const& text) Z7_override;
 };
 
 
@@ -65,6 +73,7 @@ public:
   // bool ShowDeletedFiles;
   unsigned NumPanels;
   unsigned LastFocusedPanel;
+  unsigned MultiPanelMode;
 
   bool ShowStandardToolbar;
   bool ShowArchiveToolbar;
@@ -93,7 +102,8 @@ public:
     _window(NULL),
     AutoRefresh_Mode(true),
     NumPanels(2),
-    LastFocusedPanel(0)
+    LastFocusedPanel(0),
+    MultiPanelMode(0)
   {
     SetPanels_AutoRefresh_Mode();
   }
@@ -197,6 +207,7 @@ public:
 
   void SetListSettings();
   HRESULT SwitchOnOffOnePanel();
+  HRESULT SwitchOnOffMultiPanel();
 
   CIntVector _timestampLevels;
 
@@ -303,6 +314,11 @@ public:
   void RefreshTitlePanel(unsigned panelIndex, bool always = false);
 
   void MoveSubWindows();
+
+  void MoveSubWindowsMultiPanel();
+  HRESULT InitializeMultiPanel();
+  HRESULT UninitializeMultiPanel();
+  HRESULT SyncMultiPanel();
 };
 
 #endif

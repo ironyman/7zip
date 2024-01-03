@@ -39,7 +39,7 @@ static void ConvertSizeToString(UInt64 val, wchar_t *s) throw()
 {
   unsigned char temp[32];
   unsigned i = 0;
-  
+
   if (val <= (UInt32)0xFFFFFFFF)
   {
     UInt32 val32 = (UInt32)val;
@@ -80,7 +80,7 @@ static void ConvertSizeToString(UInt64 val, wchar_t *s) throw()
     s += 4;
   }
   while (i -= 3);
-  
+
   *s = 0;
 }
 
@@ -220,7 +220,7 @@ LRESULT CPanel::SetItemText(LVITEMW &item)
 
   if (item.cchTextMax <= 1)
     return 0;
-  
+
   const CPropColumn &property = _visibleColumns[item.iSubItem];
   PROPID propID = property.ID;
 
@@ -296,7 +296,7 @@ LRESULT CPanel::SetItemText(LVITEMW &item)
       text[0] = 0;
       return 0;
     }
-    
+
     if (propID == kpidNtReparse)
     {
       UString s;
@@ -421,19 +421,19 @@ LRESULT CPanel::SetItemText(LVITEMW &item)
       const wchar_t *name = NULL;
       unsigned nameLen = 0;
       _folderGetItemName->GetItemName(realIndex, &name, &nameLen);
-      
+
       if (name)
       {
         unsigned dest = 0;
         const unsigned limit = (unsigned)item.cchTextMax - 1;
-        
+
         for (unsigned i = 0; dest < limit;)
         {
           const wchar_t c = name[i++];
           if (c == 0)
             break;
           text[dest++] = c;
-          
+
           if (c != ' ')
           {
             if (c != 0x202E) // RLO
@@ -441,10 +441,10 @@ LRESULT CPanel::SetItemText(LVITEMW &item)
             text[(size_t)dest - 1] = '_';
             continue;
           }
-          
+
           if (name[i] != ' ')
             continue;
-          
+
           unsigned t = 1;
           for (; name[i + t] == ' '; t++);
 
@@ -477,7 +477,7 @@ LRESULT CPanel::SetItemText(LVITEMW &item)
       }
     }
   }
-  
+
   if (propID == kpidPrefix)
   {
     if (_folderGetItemName)
@@ -501,9 +501,9 @@ LRESULT CPanel::SetItemText(LVITEMW &item)
       }
     }
   }
-  
+
   const HRESULT res = _folder->GetProperty(realIndex, propID, &prop);
-  
+
   if (res != S_OK)
   {
     MyStringCopy(text, L"Error: ");
@@ -545,7 +545,7 @@ LRESULT CPanel::SetItemText(LVITEMW &item)
     }
     text[i] = 0;
   }
-  
+
   return 0;
 }
 
@@ -563,6 +563,7 @@ void CPanel::OnItemChanged(NMLISTVIEW *item)
   // Don't change this code. It works only with such check
   if (oldSelected != newSelected)
     _selectedStatusVector[index] = newSelected;
+  _panelCallback->OnSelectedItemChanged();
 }
 
 extern bool g_LVN_ITEMACTIVATE_Support;
@@ -588,7 +589,7 @@ bool CPanel::OnNotifyList(LPNMHDR header, LRESULT &result)
       {
         if (!_mySelectMode)
           OnItemChanged((LPNMLISTVIEW)header);
-        
+
         // Post_Refresh_StatusBar();
         /* 9.26: we don't call Post_Refresh_StatusBar.
            it was very slow if we select big number of files
@@ -671,7 +672,7 @@ bool CPanel::OnNotifyList(LPNMHDR header, LRESULT &result)
       case NM_CLICK:
       SendRefreshStatusBarMessage();
       return 0;
-      
+
         // TODO : Handler default action...
         return 0;
         case LVN_ITEMCHANGED:
@@ -734,7 +735,7 @@ bool CPanel::OnCustomDraw(LPNMLVCUSTOMDRAW lplvcd, LRESULT &result)
   case CDDS_PREPAINT :
     result = CDRF_NOTIFYITEMDRAW;
     return true;
-    
+
   case CDDS_ITEMPREPAINT:
     /*
     SelectObject(lplvcd->nmcd.hdc,
@@ -762,7 +763,7 @@ bool CPanel::OnCustomDraw(LPNMLVCUSTOMDRAW lplvcd, LRESULT &result)
     // result = CDRF_NEWFONT;
     result = CDRF_NOTIFYITEMDRAW;
     return true;
-    
+
     // return false;
     // return true;
     /*
@@ -816,7 +817,7 @@ void CPanel::Refresh_StatusBar()
   {
     wchar_t selectSizeString[32];
     selectSizeString[0] = 0;
-    
+
     if (indices.Size() > 0)
     {
       // for (unsigned ttt = 0; ttt < 1000; ttt++) {
@@ -858,7 +859,7 @@ void CPanel::Refresh_StatusBar()
   }
   _statusBar.SetText(2, sizeString);
   _statusBar.SetText(3, dateString);
-  
+
   // _statusBar.SetText(4, nameString);
   // _statusBar2.SetText(1, MyFormatNew(L"{0} bytes", NumberToStringW(totalSize)));
   // }

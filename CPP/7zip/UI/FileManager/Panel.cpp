@@ -838,7 +838,7 @@ UString CPanel::GetFolderTypeID() const
 {
   {
     NCOM::CPropVariant prop;
-    if (_folder->GetFolderProperty(kpidType, &prop) == S_OK)
+    if (_folder && _folder->GetFolderProperty(kpidType, &prop) == S_OK)
       if (prop.vt == VT_BSTR)
         return (const wchar_t *)prop.bstrVal;
   }

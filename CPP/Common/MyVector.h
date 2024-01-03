@@ -447,6 +447,16 @@ public:
     }
     while (size > 1);
   }
+
+  T* begin() const
+  {
+    return _items;
+  }
+
+  T* end() const
+  {
+    return _items + _size;
+  }
 };
 
 typedef CRecordVector<int> CIntVector;
@@ -715,6 +725,16 @@ public:
     { return (*(*((const T *const *)a1))).Compare(*(*((const T *const *)a2))); }
 
   void Sort() { _v.Sort(CompareObjectItems, NULL); }
+
+  T* begin() const
+  {
+    return (T *)_v.begin();
+  }
+
+  T* end() const
+  {
+    return (T *)_v.end();
+  }
 };
 
 #define FOR_VECTOR(_i_, _v_) for (unsigned _i_ = 0; _i_ < (_v_).Size(); _i_++)
