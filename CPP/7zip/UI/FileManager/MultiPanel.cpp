@@ -186,7 +186,7 @@ HRESULT CPanelCallbackImp::OnSelectedItemChanged()
   return S_OK;
 }
 
-HRESULT CPanelCallbackImp::OnOpenFolder()
+HRESULT CPanelCallbackImp::OnOpenFolder(std::optional<std::reference_wrapper<bool>> shouldReturn)
 {
   if (_app->MultiPanelMode == 0)
   {
@@ -197,6 +197,17 @@ HRESULT CPanelCallbackImp::OnOpenFolder()
   {
     auto cwd = _app->Panels[_index].GetFsPath();
     _app->Panels[1].BindToPathAndRefresh(cwd);
+    if (shouldReturn.has_value())
+    {
+      shouldReturn->get() = true;
+    }
+  }
+  else
+  {
+    if (shouldReturn.has_value())
+    {
+      shouldReturn->get() = false;
+    }
   }
 
   _app->SyncMultiPanel();

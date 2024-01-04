@@ -43,6 +43,9 @@
 #include "ProgressDialog2.h"
 #include "SysIconUtils.h"
 
+#include <optional>
+#include <functional>
+
 #ifdef UNDER_CE
 #define NON_CE_VAR(_v_)
 #else
@@ -77,7 +80,7 @@ DECLARE_INTERFACE(CPanelCallback)
   virtual HRESULT OnRefreshList(bool& shouldReturn) = 0;
   virtual HRESULT OnBind(bool& shouldReturn) = 0;
   virtual HRESULT OnSelectedItemChanged() = 0;
-  virtual HRESULT OnOpenFolder() = 0;
+  virtual HRESULT OnOpenFolder(std::optional<std::reference_wrapper<bool>> shouldReturn = std::nullopt) = 0;
   virtual HRESULT OnOpenParentFolder() = 0;
   virtual UString OnSetComboText(UString const& text) = 0;
 

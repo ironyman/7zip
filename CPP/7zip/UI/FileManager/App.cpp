@@ -60,7 +60,17 @@ void CPanelCallbackImp::SetFocusToPath(unsigned index)
 void CPanelCallbackImp::SetFocusToPathNoDropDown()
 {
   _app->RefreshTitle();
-  _app->Panels[g_App.LastFocusedPanel]._headerComboBox.SetFocus();
+
+  if (_app->MultiPanelMode == 0)
+  {
+    _app->Panels[g_App.LastFocusedPanel]._headerComboBox.SetFocus();
+  }
+  else
+  {
+    UString text = _app->Panels[1].GetFsPath();
+    _app->Panels[0]._headerComboBox.SetText(text);
+    _app->Panels[0]._headerComboBox.SetFocus();
+  }
 }
 
 void CPanelCallbackImp::OnCopy(bool move, bool copyToSame) { _app->OnCopy(move, copyToSame, _index); }

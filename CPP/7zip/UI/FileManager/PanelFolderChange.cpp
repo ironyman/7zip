@@ -442,8 +442,14 @@ LRESULT CPanel::OnNotifyComboBoxEnter(const UString &s)
   auto path = ExpandEnvironmentStringsWrapper(std::wstring(s == L"~" ? L"%USERPROFILE%" : (const wchar_t *)s));
   if (path && BindToPathAndRefresh(GetUnicodeString(UString((*path).data()))) == S_OK)
   {
+    bool shouldReturn;
+    _panelCallback->OnOpenFolder(shouldReturn);
+    if (shouldReturn)
+    {
+      return TRUE;
+    }
+
     PostMsg(kSetFocusToListView);
-    _panelCallback->OnOpenFolder();
     return TRUE;
   }
   return FALSE;
