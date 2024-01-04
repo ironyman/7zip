@@ -14,6 +14,7 @@
             "preLaunchTask": "build 7zfm"
         },
         {
+            // $err in debug console to gle
             "name": "(Windows) Launch",
             "type": "cppvsdbg",
             "request": "launch",

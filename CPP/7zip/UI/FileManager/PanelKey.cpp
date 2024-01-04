@@ -7,6 +7,9 @@
 
 #include "../../PropID.h"
 #include "App.h"
+#include "../../../Windows/ProcessUtils.h"
+
+#include <shlwapi.h>
 
 using namespace NWindows;
 
@@ -364,6 +367,50 @@ bool CPanel::OnKeyDown(LPNMLVKEYDOWN keyDownInfo, LRESULT &result)
       if (alt && !ctrl && !shift)
       {
         FoldersHistory();
+        return true;
+      }
+    case 'F':
+      if (ctrl)
+      {
+        auto cwd = GetFsPath();
+        auto findProc = new CProcess();
+        findProc->_overlapWindow = TRUE;
+        findProc->_readStdout = TRUE;
+        findProc->Create(L"fzf", L"", cwd);
+        // findProc->Create(L"conhost", L"fzf.exe", cwd);
+        // findProc->Create(L"conhost", L"powershell -noexit -command fzf.exe", cwd);
+
+        auto that = this;
+        if (findProc->WaitAndRun([that, cwd](UString path)
+          {
+            path.Insert(0, cwd.Ptr());
+            if (!PathIsDirectory(path))
+            {
+              path = path.GetDirectory();
+            }
+
+            // Actually don't even need the SendMessage(..., kOpenPath, ...)
+            if (IsGUIThread(TRUE))
+            {
+              that->OnNotifyComboBoxEnter(path);
+            }
+            else
+            {
+              // SendMessage(g_HWND, kOpenPath, (WPARAM)&path, NULL);
+            }
+          }) != 0
+        )
+        {
+          delete findProc;
+        }
+
+        // auto path = findProc.WaitRead();
+
+        // if (!PathIsDirectory(path))
+        // {
+        //   path = path.GetDirectory();
+        // }
+        // OnNotifyComboBoxEnter(path);
         return true;
       }
   }

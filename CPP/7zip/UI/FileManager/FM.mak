@@ -4,7 +4,7 @@ CFLAGS = $(CFLAGS) \
 !IFDEF UNDER_CE
 LIBS = $(LIBS) ceshell.lib Commctrl.lib
 !ELSE
-LIBS = $(LIBS) comctl32.lib htmlhelp.lib comdlg32.lib Mpr.lib Gdi32.lib shlwapi.lib
+LIBS = $(LIBS) comctl32.lib htmlhelp.lib comdlg32.lib Mpr.lib Gdi32.lib shlwapi.lib Pathcch.lib
 CFLAGS = $(CFLAGS) -DZ7_LONG_PATH -DZ7_DEVICE_FILE /std:c++20
 LFLAGS = $(LFLAGS) /DELAYLOAD:mpr.dll
 LIBS = $(LIBS) delayimp.lib

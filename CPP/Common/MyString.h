@@ -14,7 +14,9 @@
 #include "MyWindows.h"
 #include "MyTypes.h"
 #include "MyVector.h"
+#include <pathcch.h>
 
+// #pragma comment(lib, "pathcch.lib")
 
 /* if (DEBUG_FSTRING_INHERITS_ASTRING is defined), then
      FString inherits from AString, so we can find bugs related to FString at compile time.
@@ -779,6 +781,36 @@ public:
       memset(_chars, 0, (_limit + 1) * sizeof(*_chars));
       _len = 0;
     }
+
+  }
+
+  UString GetFileName() const
+  {
+    int slashPos = this->ReverseFind_PathSepar();
+    if (slashPos >= 0 && (unsigned int)slashPos == this->Len() - 1)
+    {
+      slashPos = this->Left(slashPos).ReverseFind_PathSepar();
+    }
+
+    if (slashPos >= 0)
+    {
+      UString filename = UString(*this);
+      filename.DeleteFrontal((unsigned)(slashPos + 1));
+      if (filename[filename.Len() - 1] == WCHAR_PATH_SEPARATOR)
+      {
+        filename.DeleteBack();
+      }
+
+      return filename;
+    }
+    return L"";
+  }
+
+  UString GetDirectory() const
+  {
+    auto copy = UString(*this);
+    PathCchRemoveFileSpec(copy._chars, copy._len);
+    return copy;
   }
 };
 

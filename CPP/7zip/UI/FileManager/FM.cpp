@@ -1049,6 +1049,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
       break;
     }
 
+    case kOpenPath:
+    {
+      UString *path = reinterpret_cast<UString *>(wParam);
+      g_App.Panels[g_App.LastFocusedPanel].NavigatePath(*path);
+      break;
+    }
     /*
     case WM_DROPFILES:
     {

@@ -65,6 +65,17 @@ public:
     }
   }
 
+  template <class _Iter, std::enable_if_t<std::_Is_iterator_v<_Iter>, int> = 0>
+  CRecordVector(_Iter start, _Iter end): _items(NULL), _size(0), _capacity(0)
+  {
+    CRecordVector();
+    // Reserve(1);
+    while (start != end)
+    {
+      Add(*start++);
+    }
+  }
+
   unsigned Size() const { return _size; }
   bool IsEmpty() const { return _size == 0; }
 

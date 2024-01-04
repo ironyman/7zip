@@ -4,6 +4,11 @@
 #define ZIP7_INC_WINDOWS_PROCESS_UTILS_H
 
 #include "../Common/MyWindows.h"
+#include "../Common/MyVector.h"
+#include "../Common/MyString.h"
+#include "../Common/StringConvert.h"
+
+#include <functional>
 
 #ifndef Z7_OLD_WIN_SDK
 
@@ -44,9 +49,43 @@ typedef PROCESS_MEMORY_COUNTERS *PPROCESS_MEMORY_COUNTERS;
 
 namespace NWindows {
 
+
+BOOL
+APIENTRY
+MyCreatePipeEx(
+    OUT LPHANDLE lpReadPipe,
+    OUT LPHANDLE lpWritePipe,
+    IN LPSECURITY_ATTRIBUTES lpPipeAttributes,
+    IN DWORD nSize,
+    DWORD dwReadMode,
+    DWORD dwWriteMode
+    );
+
 class CProcess: public CHandle
 {
 public:
+  HANDLE _hStdoutRead, _hStdoutWrite;
+  CByteVector _readBuffer;
+  BOOL _deleteSelf{};
+  BOOL _overlapWindow{};
+  BOOL _readStdout{};
+
+  CProcess() : _hStdoutRead(NULL), _hStdoutWrite(NULL) {}
+  virtual ~CProcess()
+  {
+    if (_hStdoutRead != NULL)
+    {
+      CloseHandle(_hStdoutRead);
+      _hStdoutRead = NULL;
+    }
+
+    if (_hStdoutWrite != NULL)
+    {
+      CloseHandle(_hStdoutWrite);
+      _hStdoutWrite = NULL;
+    }
+  }
+
   bool Open(DWORD desiredAccess, bool inheritHandle, DWORD processId)
   {
     _handle = ::OpenProcess(desiredAccess, inheritHandle, processId);
@@ -128,7 +167,15 @@ public:
 
   WRes Create(LPCWSTR imageName, const UString &params, LPCWSTR curDir);
 
-  DWORD Wait() { return ::WaitForSingleObject(_handle, INFINITE); }
+  DWORD Wait()
+  {
+    DWORD result = ::WaitForSingleObject(_handle, INFINITE);
+    return result;
+  }
+
+  UString WaitRead();
+  WRes WaitAndRun(std::function<void(UString)> const& fn);
+  WRes WaitAndRunOverlapped(std::function<void(UString)> const& fn);
 };
 
 WRes MyCreateProcess(LPCWSTR imageName, const UString &params);

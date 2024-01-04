@@ -1194,3 +1194,8 @@ void CPanel::TestArchives()
   }
   ::TestArchives(paths);
 }
+
+void CPanel::NavigatePath(UString const& path)
+{
+  OnNotifyComboBoxEnter(path);
+}

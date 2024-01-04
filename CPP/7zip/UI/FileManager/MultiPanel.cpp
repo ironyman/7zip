@@ -238,23 +238,7 @@ UString CPanelCallbackImp::OnSetComboText(UString const& text)
   }
 
   // The second and third panel should only display the file name.
-  int slashPos = text.ReverseFind_PathSepar();
-  if (slashPos >= 0 && slashPos == text.Len() - 1)
-  {
-    slashPos = text.Left(slashPos).ReverseFind_PathSepar();
-  }
+  return text.GetFileName();
 
-  if (slashPos >= 0)
-  {
-    UString filename = UString(text);
-    filename.DeleteFrontal((unsigned)(slashPos + 1));
-    if (filename[filename.Len() - 1] == WCHAR_PATH_SEPARATOR)
-    {
-      filename.DeleteBack();
-    }
-
-    return filename;
-  }
-
-  return UString();
+  // _app->Panels[1].SetFocusToList();
 }

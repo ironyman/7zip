@@ -321,4 +321,9 @@ public:
   HRESULT SyncMultiPanel();
 };
 
+
+enum MyAppMessages
+{
+  kOpenPath = WM_USER + 1,
+};
 #endif
