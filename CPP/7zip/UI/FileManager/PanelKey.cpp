@@ -383,6 +383,7 @@ bool CPanel::OnKeyDown(LPNMLVKEYDOWN keyDownInfo, LRESULT &result)
         auto that = this;
         if (findProc->WaitAndRun([that, cwd](UString path)
           {
+            SetForegroundWindow(g_HWND);
             path.Insert(0, cwd.Ptr());
             if (!PathIsDirectory(path))
             {

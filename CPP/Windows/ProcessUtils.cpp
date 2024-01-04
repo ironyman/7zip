@@ -238,7 +238,7 @@ WRes CProcess::Create(LPCWSTR imageName, const UString &params, LPCWSTR curDir)
     }
 
     result = CreateProcessW(imageName, params2.Ptr_non_const(),
-        NULL, NULL, _readStdout, _readStdout ? CREATE_NEW_CONSOLE : 0, NULL, curDir, &si, &pi);
+        NULL, NULL, _readStdout, 0, NULL, curDir, &si, &pi);
 
     // Child process will have this handle, we don't need it. When child process
     // exits they will close their instance of this handle and our _hStdoutRead
@@ -317,7 +317,6 @@ struct CThreadProcessWaitSync
   }
   void Process()
   {
-    CHAR chBuf[4096];
     BOOL bSuccess = FALSE;
 
     for (;;)
