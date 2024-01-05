@@ -139,7 +139,7 @@ static UString GetQuotedString(const UString &s)
 }
 #endif
 
-WRes CProcess::Create(LPCWSTR imageName, const UString &params, LPCWSTR curDir)
+WRes CProcess::Create(LPCWSTR imageName, const UString &params, LPCWSTR curDir, LPVOID additionalEnvVar)
 {
   /*
   OutputDebugStringW(L"CProcess::Create");
@@ -195,7 +195,7 @@ WRes CProcess::Create(LPCWSTR imageName, const UString &params, LPCWSTR curDir)
       sizeof(SECURITY_ATTRIBUTES), NULL, TRUE
     };
 
-
+    CRecordVector<WCHAR> env;
     STARTUPINFOW si{};
     si.cb = sizeof(si);
 
@@ -237,8 +237,32 @@ WRes CProcess::Create(LPCWSTR imageName, const UString &params, LPCWSTR curDir)
       curDir = NULL;
     }
 
+    if (additionalEnvVar != NULL)
+    {
+      PWCHAR envBlock = GetEnvironmentStrings();
+      PWCHAR envBlockEnd = envBlock;
+
+      // Could probably just SetEnvironmentVariable instead.
+      while (*envBlockEnd != 0)
+      {
+        envBlockEnd += wcslen(envBlockEnd) + 1;
+      }
+
+      PWCHAR additionalEnvVarEnd = (PWCHAR)additionalEnvVar;
+      while (*additionalEnvVarEnd != 0)
+      {
+        additionalEnvVarEnd += wcslen(additionalEnvVarEnd) + 1;
+      }
+      ++additionalEnvVarEnd;
+
+      env = CRecordVector<WCHAR>(envBlock, envBlockEnd);
+      env += CRecordVector<WCHAR>((PWCHAR)additionalEnvVar, additionalEnvVarEnd);
+    }
+
     result = CreateProcessW(imageName, params2.Ptr_non_const(),
-        NULL, NULL, _readStdout, 0, NULL, curDir, &si, &pi);
+        NULL, NULL, _readStdout, CREATE_UNICODE_ENVIRONMENT,
+        additionalEnvVar != NULL ? (LPVOID)env.begin() : NULL,
+        curDir, &si, &pi);
 
     // Child process will have this handle, we don't need it. When child process
     // exits they will close their instance of this handle and our _hStdoutRead

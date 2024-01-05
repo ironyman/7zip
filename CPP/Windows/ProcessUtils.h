@@ -165,7 +165,7 @@ public:
 
   #endif
 
-  WRes Create(LPCWSTR imageName, const UString &params, LPCWSTR curDir);
+  WRes Create(LPCWSTR imageName, const UString &params, LPCWSTR curDir, LPVOID additionalEnvVar = NULL);
 
   DWORD Wait()
   {
