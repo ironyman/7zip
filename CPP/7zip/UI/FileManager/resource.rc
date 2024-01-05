@@ -36,6 +36,10 @@ BEGIN
   BEGIN
     MENUITEM "&Open\tEnter",                IDM_OPEN
     MENUITEM "Open &Inside\tCtrl+PgDn",     IDM_OPEN_INSIDE
+    MENUITEM "Open VS Code\tCtrl+Enter",    IDM_OPEN_VSCODE
+    MENUITEM "Open Terminal\tAlt+Shift+Enter", IDM_OPEN_TERMINAL
+    MENUITEM "Open Explorer\tShift+Enter",  IDM_OPEN_EXPLORER
+    MENUITEM "Copy Path\tAlt+Shift+C",      IDM_COPY_PATH
     MENUITEM "Open Inside *",               IDM_OPEN_INSIDE_ONE
     MENUITEM "Open Inside #",               IDM_OPEN_INSIDE_PARSER
     MENUITEM "Open O&utside\tShift+Enter",  IDM_OPEN_OUTSIDE
@@ -215,7 +219,7 @@ BEGIN
   IDS_DELETING              "Deleting..."
   IDS_ERROR_DELETING        "Error Deleting File or Folder"
   IDS_ERROR_LONG_PATH_TO_RECYCLE  "The system cannot move a file with long path to the Recycle Bin"
-  
+
   IDS_CREATE_FOLDER       "Create Folder"
   IDS_CREATE_FILE         "Create File"
   IDS_CREATE_FOLDER_NAME  "Folder name:"

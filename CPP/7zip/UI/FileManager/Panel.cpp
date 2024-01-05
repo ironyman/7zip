@@ -180,18 +180,36 @@ LRESULT CMyListView::OnMessage(UINT message, WPARAM wParam, LPARAM lParam)
   else if (message == WM_SYSCHAR)
   {
     // For Alt+Enter Beep disabling
+    // And disable beep for Alt + number key row.
     UINT scanCode = (UINT)(lParam >> 16) & 0xFF;
     UINT virtualKey = MapVirtualKey(scanCode, 1);
     if (virtualKey == VK_RETURN || virtualKey == VK_MULTIPLY ||
-        virtualKey == VK_ADD || virtualKey == VK_SUBTRACT)
+        virtualKey == VK_ADD || virtualKey == VK_SUBTRACT || virtualKey == 'C'
+        || (virtualKey >= '0' && virtualKey <= '9'))
       return 0;
   }
-  /*
   else if (message == WM_SYSKEYDOWN)
   {
-    // return 0;
+    // This handles alt key presses.
+    bool alt = IsKeyDown(VK_MENU);
+    bool ctrl = IsKeyDown(VK_CONTROL);
+    bool shift = IsKeyDown(VK_SHIFT);
+    switch (wParam)
+    {
+      case 'C':
+      if (!ctrl && alt && shift)
+      {
+        g_App.CopyItemPath();
+        return 0;
+      }
+      case VK_RETURN:
+      if (!ctrl && alt && shift)
+      {
+        g_App.OpenItemTerminal();
+        return 0;
+      }
+    }
   }
-  */
   else if (message == WM_KEYDOWN)
   {
     bool alt = IsKeyDown(VK_MENU);
@@ -225,6 +243,21 @@ LRESULT CMyListView::OnMessage(UINT message, WPARAM wParam, LPARAM lParam)
         _panel->OpenParentFolder();
         return 0;
       }
+      break;
+      case VK_RETURN:
+      // return (activation) are handled in CPanel::OnNotifyActivateItems after this.
+      if (ctrl && !alt && !shift)
+      {
+        g_App.OpenItemVscode();
+        return 0;
+      }
+      break;
+      case VK_ESCAPE:
+      {
+        DeselectAll();
+        return 0;
+      }
+      break;
     }
   }
   #ifdef UNDER_CE

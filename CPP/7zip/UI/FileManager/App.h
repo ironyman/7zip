@@ -133,6 +133,10 @@ public:
   void OpenItem() { GetFocusedPanel().OpenSelectedItems(true); }
   void OpenItemInside(const wchar_t *type) { GetFocusedPanel().OpenFocusedItemAsInternal(type); }
   void OpenItemOutside() { GetFocusedPanel().OpenSelectedItems(false); }
+  void OpenItemVscode() { GetFocusedPanel().OpenSelectedItem(L"code.cmd", L"", SW_HIDE); }
+  void OpenItemTerminal() { GetFocusedPanel().OpenInSelectedItem(L"powershell.exe"); }
+  void OpenItemExplorer() { GetFocusedPanel().OpenInSelectedItem(L"", L"explore"); }
+  void CopyItemPath() { GetFocusedPanel().CopyItemPath(); }
   void EditItem(bool useEditor) { GetFocusedPanel().EditItem(useEditor); }
   void Rename() { GetFocusedPanel().RenameFile(); }
   void CopyTo() { OnCopy(false, false, GetFocusedPanelIndex()); }

@@ -32,6 +32,7 @@
 #include "../../../Windows/Control/StatusBar.h"
 #include "../../../Windows/Control/ToolBar.h"
 #include "../../../Windows/Control/Window2.h"
+#include "../../../Windows/ProcessUtils.h"
 
 #include "../../Archive/IArchive.h"
 
@@ -869,6 +870,9 @@ public:
 
   void OpenFocusedItemAsInternal(const wchar_t *type = NULL);
   void OpenSelectedItems(bool internal);
+  void OpenSelectedItem(UString const& command, UString const& operation = L"", int nShow = SW_SHOWNORMAL);
+  void OpenInSelectedItem(UString const& command, UString const& operation = L"");
+  void CopyItemPath();
 
   void OpenFolderExternal(unsigned index);
 
@@ -1033,4 +1037,13 @@ public:
 
 extern CExitEventLauncher g_ExitEventLauncher;
 
+void StartApplicationDontWait(const UString &dir, const UString &path, HWND window);
+HRESULT StartApplication(
+  const UString &dir,
+  const UString &path,
+  const UString &operation,
+  const UString &parameter,
+  HWND window,
+  NWindows::CProcess &process,
+  int nShow = SW_SHOWNORMAL);
 #endif

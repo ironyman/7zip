@@ -63,6 +63,11 @@
 #define IDM_OPEN_INSIDE_ONE      590
 #define IDM_OPEN_INSIDE_PARSER   591
 
+#define IDM_OPEN_VSCODE          592
+#define IDM_OPEN_TERMINAL        593
+#define IDM_OPEN_EXPLORER        594
+#define IDM_COPY_PATH            595
+
 #define IDM_SELECT_ALL           600
 #define IDM_DESELECT_ALL         601
 #define IDM_INVERT_SELECTION     602

@@ -26,7 +26,7 @@ public:
     ListView_SetUnicodeFormat(_window, TRUE);
     #endif
   }
- 
+
   bool DeleteAllItems() { return BOOLToBool(ListView_DeleteAllItems(_window)); }
   bool DeleteColumn(unsigned columnIndex) { return BOOLToBool(ListView_DeleteColumn(_window, columnIndex)); }
 
@@ -77,7 +77,7 @@ public:
   int GetNextItem(int startIndex, UINT flags) const { return ListView_GetNextItem(_window, startIndex, flags); }
   int GetNextSelectedItem(int startIndex) const { return GetNextItem(startIndex, LVNI_SELECTED); }
   int GetFocusedItem() const { return GetNextItem(-1, LVNI_FOCUSED); }
-  
+
   bool GetItem(LVITEM* item) const { return BOOLToBool(ListView_GetItem(_window, item)); }
   bool GetItemParam(unsigned itemIndex, LPARAM &param) const;
   /*
@@ -92,6 +92,7 @@ public:
   void SetItemState_Selected(int index, bool select) { SetItemState(index, select ? LVIS_SELECTED : 0, LVIS_SELECTED); }
   void SetItemState_Selected(int index) { SetItemState(index, LVIS_SELECTED, LVIS_SELECTED); }
   void SelectAll() { SetItemState_Selected(-1); }
+  void DeselectAll() { SetItemState_Selected(-1, 0); }
   void SetItemState_FocusedSelected(int index) { SetItemState(index, LVIS_FOCUSED | LVIS_SELECTED, LVIS_FOCUSED | LVIS_SELECTED); }
   UINT GetItemState(int index, UINT mask) const { return ListView_GetItemState(_window, index, mask); }
   bool IsItemSelected(int index) const { return GetItemState(index, LVIS_SELECTED) == LVIS_SELECTED; }
@@ -125,7 +126,7 @@ public:
     return true;
   }
   bool RedrawItem(int index) { return RedrawItems(index, index); }
- 
+
   int HitTest(LPLVHITTESTINFO info) { return ListView_HitTest(_window, info); }
   COLORREF GetBkColor() { return ListView_GetBkColor(_window); }
   bool SetColumnWidth(int iCol, int cx) { return BOOLToBool(ListView_SetColumnWidth(_window, iCol, cx)); }

@@ -8,6 +8,8 @@
 #include "../../../Windows/Menu.h"
 #include "../../../Windows/PropVariant.h"
 #include "../../../Windows/PropVariantConv.h"
+#include "../../../Windows/ProcessUtils.h"
+#include "../../../Windows/Clipboard.h"
 
 #include "../../PropID.h"
 
@@ -1062,6 +1064,53 @@ void CPanel::OpenSelectedItems(bool tryInternal)
     else
       OpenItem(index, (tryInternal && indices.Size() == 1), true);
   }
+
+  if (indices.Size() == 0)
+  {
+    OpenInSelectedItem(L"", L"explore");
+  }
+}
+
+void CPanel::OpenSelectedItem(UString const& command, UString const& operation, int nShow)
+{
+  UString cwd = GetFsPath();
+  UString path = cwd;
+  CRecordVector<UInt32> indices;
+  Get_ItemIndices_Operated(indices);
+  if (indices.Size() > 0)
+  {
+    path = GetItemFullPath(indices[0]).Ptr();
+  }
+
+  NWindows::CProcess process;
+  StartApplication(cwd, command, operation, path, NULL, process, nShow);
+}
+
+void CPanel::OpenInSelectedItem(UString const& command, UString const& operation)
+{
+  UString cwd = GetFsPath();
+  UString path = cwd;
+  CRecordVector<UInt32> indices;
+  Get_ItemIndices_Operated(indices);
+  if (indices.Size() > 0)
+  {
+    path = GetItemFullPath(indices[0]).Ptr();
+  }
+
+  NWindows::CProcess process;
+  StartApplication(path, command, operation, L"", NULL, process);
+}
+
+void CPanel::CopyItemPath()
+{
+  UString path = GetFsPath();
+  CRecordVector<UInt32> indices;
+  Get_ItemIndices_Operated(indices);
+  if (indices.Size() > 0)
+  {
+    path = GetItemFullPath(indices[0]).Ptr();
+  }
+  ClipboardSetText(NULL, path);
 }
 
 UString CPanel::GetItemName(unsigned itemIndex) const
