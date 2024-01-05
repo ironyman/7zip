@@ -1081,6 +1081,8 @@ void CPanel::OpenSelectedItem(UString const& command, UString const& operation, 
   {
     path = GetItemFullPath(indices[0]).Ptr();
   }
+  path.InsertAtFront(L'\"');
+  path += L"\"";
 
   NWindows::CProcess process;
   StartApplication(cwd, command, operation, path, NULL, process, nShow);
