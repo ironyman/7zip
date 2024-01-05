@@ -84,6 +84,7 @@ DECLARE_INTERFACE(CPanelCallback)
   virtual HRESULT OnOpenFolder(std::optional<std::reference_wrapper<bool>> shouldReturn = std::nullopt) = 0;
   virtual HRESULT OnOpenParentFolder() = 0;
   virtual UString OnSetComboText(UString const& text) = 0;
+  virtual bool IsMultiPanelMode() = 0;
 
 };
 Z7_PURE_INTERFACES_END
@@ -582,6 +583,7 @@ public:
   void SaveListViewInfo();
 
   CPanel() :
+      _panelCallback(NULL),
       _thereAre_ListView_Items(false),
       _exStyle(0),
       _showDots(false),
@@ -995,6 +997,7 @@ public:
 
   // friend HRESULT CApp::InitializeMultiPanel();
   friend class CApp;
+  friend class CPanelCallbackImp;
 };
 
 class CMyBuffer

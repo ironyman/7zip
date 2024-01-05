@@ -391,7 +391,11 @@ static int GetRealIconIndex(CFSTR path, DWORD attributes)
 void CPanel::LoadFullPathAndShow()
 {
   LoadFullPath();
-  _appState->FolderHistory.AddString(_currentFolderPrefix);
+  // _panelCallback might not be initialized yet..
+  if (_panelCallback == NULL || !_panelCallback->IsMultiPanelMode())
+  {
+    _appState->FolderHistory.AddString(_currentFolderPrefix);
+  }
 
   SetComboText(_currentFolderPrefix);
 
@@ -698,7 +702,10 @@ void CPanel::FoldersHistory()
       selectString = listViewDialog.Strings[listViewDialog.FocusedItemIndex];
   }
   if (listViewDialog.FocusedItemIndex >= 0)
+  {
     BindToPathAndRefresh(selectString);
+    _panelCallback->OnOpenFolder();
+  }
 }
 
 

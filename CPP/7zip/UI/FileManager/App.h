@@ -59,6 +59,7 @@ public:
   virtual HRESULT OnOpenFolder(std::optional<std::reference_wrapper<bool>> shouldReturn = std::nullopt) Z7_override;
   virtual HRESULT OnOpenParentFolder() Z7_override;
   virtual UString OnSetComboText(UString const& text) Z7_override;
+  virtual bool IsMultiPanelMode() Z7_override;
 };
 
 

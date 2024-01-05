@@ -347,7 +347,7 @@ void ClipboardSetFiles(HWND owner, const std::vector<std::wstring>& filePaths, D
   fileBufferPos = fileBuffer;
   for (const auto &filePath : filePaths)
   {
-    int ret = wcsncpy_s(fileBufferPos, fileBufferSize - (fileBufferPos - fileBuffer),
+    wcsncpy_s(fileBufferPos, fileBufferSize - (fileBufferPos - fileBuffer),
               filePath.c_str(), filePath.length());
     fileBufferPos += filePath.length() + 1;
   }

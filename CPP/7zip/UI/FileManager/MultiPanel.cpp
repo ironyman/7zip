@@ -193,23 +193,24 @@ HRESULT CPanelCallbackImp::OnOpenFolder(std::optional<std::reference_wrapper<boo
     return S_OK;
   }
 
+  if (shouldReturn.has_value())
+  {
+    shouldReturn->get() = false;
+  }
+
   if (_index != 1)
   {
     auto cwd = _app->Panels[_index].GetFsPath();
     _app->Panels[1].BindToPathAndRefresh(cwd);
+
+    // This is to notify OnNotifyComboBoxEnter to skip default action.
     if (shouldReturn.has_value())
     {
       shouldReturn->get() = true;
     }
   }
-  else
-  {
-    if (shouldReturn.has_value())
-    {
-      shouldReturn->get() = false;
-    }
-  }
 
+  _app->Panels[1]._appState->FolderHistory.AddString(_app->Panels[1]._currentFolderPrefix);
   _app->SyncMultiPanel();
 
   _app->Panels[1]._listView.SetItemState_Selected(0, true);
@@ -241,4 +242,9 @@ UString CPanelCallbackImp::OnSetComboText(UString const& text)
   return text.GetFileName();
 
   // _app->Panels[1].SetFocusToList();
+}
+
+bool CPanelCallbackImp::IsMultiPanelMode()
+{
+  return _app->MultiPanelMode != 0;
 }
