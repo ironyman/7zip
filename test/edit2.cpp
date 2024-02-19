@@ -6,6 +6,7 @@
 #pragma comment(lib, "gdi32.lib")
 #pragma comment(lib, "Comctl32.lib")
 
+// this generates edit2.exe.manifest btw
 // https://learn.microsoft.com/en-us/windows/win32/controls/cookbook-overview?redirectedfrom=MSDN
 #pragma comment(linker,"\"/manifestdependency:type='win32' \
 name='Microsoft.Windows.Common-Controls' version='6.0.0.0' \
