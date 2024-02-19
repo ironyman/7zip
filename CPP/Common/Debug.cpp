@@ -25,6 +25,30 @@ void __cdecl Z7DbgPrintA(const char *format, ...)
   OutputDebugStringA(buf);
 }
 
+void __cdecl Z7DbgPrintW(const wchar_t *format, ...)
+{
+  wchar_t    buf[4096], *p = buf;
+  va_list args;
+  int     n;
+
+  va_start(args, format);
+  n = _vsnwprintf_s(p, ARRAYSIZE(buf), sizeof buf, format, args);
+  // n = _vsnprintf_s(p, ARRAYSIZE(buf), sizeof buf - 3, format, args); // buf-3 is room for CR/LF/NUL
+  va_end(args);
+
+  // p += (n < 0) ? sizeof buf - 3 : n;
+
+  // while ( p > buf  &&  isspace(p[-1]) )
+  //         *--p = '\0';
+
+  // *p++ = '\r';
+  // *p++ = '\n';
+  // *p   = '\0';
+
+  OutputDebugStringW(buf);
+}
+
+
 VOID
 DbgDumpHex(PBYTE pbData, SIZE_T cbData)
 {

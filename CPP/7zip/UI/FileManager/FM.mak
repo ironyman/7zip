@@ -14,6 +14,7 @@ FM_OBJS = \
   $O\App.obj \
   $O\BrowseDialog.obj \
   $O\ClassDefs.obj \
+  $O\Debounce.obj \
   $O\EnumFormatEtc.obj \
   $O\ExtractCallback.obj \
   $O\FileFolderPluginOpen.obj \
@@ -30,6 +31,7 @@ FM_OBJS = \
   $O\OpenCallback.obj \
   $O\OptionsDialog.obj \
   $O\Panel.obj \
+  $O\PanelFind.obj \
   $O\PanelCopy.obj \
   $O\PanelCrc.obj \
   $O\PanelDrag.obj \

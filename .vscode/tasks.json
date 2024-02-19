@@ -40,6 +40,13 @@
                         "line": 2,
                         "message": 3
                     },
+                    {
+                        // Regular expression to match filename (on earlier line than actual warnings)
+                        "regexp": "^(.*?) : error (.*?): (.*)$",
+                        "file": 1,
+                        "code": 2,
+                        "message": 3
+                    },
                 ]
             },
             "presentation": {

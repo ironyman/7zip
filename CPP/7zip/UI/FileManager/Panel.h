@@ -43,6 +43,8 @@
 #include "MyCom2.h"
 #include "ProgressDialog2.h"
 #include "SysIconUtils.h"
+#include "PanelFind.h"
+#include "Debounce.h"
 
 #include <optional>
 #include <functional>
@@ -78,6 +80,8 @@ DECLARE_INTERFACE(CPanelCallback)
   virtual void DragBegin() = 0;
   virtual void DragEnd() = 0;
   virtual void RefreshTitle(bool always) = 0;
+
+  // Multi panel callbacks.
   virtual HRESULT OnRefreshList(bool& shouldReturn) = 0;
   virtual HRESULT OnBind(bool& shouldReturn) = 0;
   virtual HRESULT OnSelectedItemChanged() = 0;
@@ -85,7 +89,6 @@ DECLARE_INTERFACE(CPanelCallback)
   virtual HRESULT OnOpenParentFolder() = 0;
   virtual UString OnSetComboText(UString const& text) = 0;
   virtual bool IsMultiPanelMode() = 0;
-
 };
 Z7_PURE_INTERFACES_END
 
@@ -298,8 +301,6 @@ struct CCopyToOptions
       {}
 };
 
-
-
 struct COpenResult
 {
   // bool needOpenArc;
@@ -322,6 +323,7 @@ class CPanel Z7_final: public NWindows::NControl::CWindow2
   UINT _baseID;
   unsigned _comboBoxID;
   UINT _statusBarID;
+  UINT _panelFindID;
 
   CAppState *_appState;
 
@@ -349,7 +351,6 @@ class CPanel Z7_final: public NWindows::NControl::CWindow2
   bool OnNotifyReBar(LPNMHDR lParam, LRESULT &result);
   bool OnNotifyComboBox(LPNMHDR lParam, LRESULT &result);
   void OnItemChanged(NMLISTVIEW *item);
-  void OnNotifyActivateItems();
   bool OnNotifyList(LPNMHDR lParam, LRESULT &result);
   void OnDrag(LPNMLISTVIEW nmListView, bool isRightButton = false);
   bool OnKeyDown(LPNMLVKEYDOWN keyDownInfo, LRESULT &result);
@@ -360,6 +361,7 @@ class CPanel Z7_final: public NWindows::NControl::CWindow2
 
 
 public:
+  void OnNotifyActivateItems();
   HWND _mainWindow;
   CPanelCallback *_panelCallback;
 
@@ -614,7 +616,10 @@ public:
 
       _needSaveInfo(false),
       _startGroupSelect(0),
-      _selectionIsDefined(false)
+      _selectionIsDefined(false),
+      _debounceOnPanelFindEditChange([](CPanel *panel) {
+        panel->OnPanelFindEditChangeDebouncedHandler();
+      }, 400)
   {}
 
   void SetExtendedStyle()
@@ -994,6 +999,16 @@ public:
 
   UString GetItemsInfoString(const CRecordVector<UInt32> &indices);
   void SetComboText(UString const& text);
+
+  CPanelFind _panelFind;
+  bool _findMode = false;
+  Debounce<void (*)(CPanel*)> _debounceOnPanelFindEditChange;
+  void EnterFindMode();
+  void ExitFindMode();
+  void FindNextItem(UString const& text);
+  void OnPanelFindEditChange();
+  void OnPanelFindEditChangeDebouncedHandler();
+  // CPanel::OnPanelFindEditChangeDebouncedHandler, 400);
 
   // friend HRESULT CApp::InitializeMultiPanel();
   friend class CApp;

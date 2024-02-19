@@ -627,6 +627,7 @@ public:
   void ReplaceOneCharAtPos(unsigned pos, wchar_t c) { _chars[pos] = c; }
 
   wchar_t *GetBuf() { return _chars; }
+  const wchar_t *GetBuf() const { return _chars; }
 
   /*
   wchar_t *GetBuf_GetMaxAvail(unsigned &availBufLen)

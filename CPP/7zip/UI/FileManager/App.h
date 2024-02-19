@@ -53,6 +53,8 @@ public:
   virtual void DragBegin() Z7_override;
   virtual void DragEnd() Z7_override;
   virtual void RefreshTitle(bool always) Z7_override;
+
+  // Multi panel callbacks.
   virtual HRESULT OnRefreshList(bool& shouldReturn) Z7_override;
   virtual HRESULT OnBind(bool& shouldReturn) Z7_override;
   virtual HRESULT OnSelectedItemChanged() Z7_override;

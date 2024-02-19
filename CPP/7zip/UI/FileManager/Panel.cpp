@@ -92,6 +92,7 @@ HRESULT CPanel::Create(HWND mainWindow, HWND parentWindow, UINT id,
   _baseID = id;
   _comboBoxID = _baseID + 3;
   _statusBarID = _comboBoxID + 1;
+  _panelFindID = _statusBarID + 1;
 
   UString cfp = currentFolderPrefix;
 
@@ -108,7 +109,7 @@ HRESULT CPanel::Create(HWND mainWindow, HWND parentWindow, UINT id,
   if (needOpenArc && !openRes.ArchiveIsOpened)
     return S_OK;
 
-  if (!CreateEx(0, kClassName, NULL, WS_CHILD | WS_VISIBLE,
+  if (!CreateEx(0, kClassName, NULL, WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS,
       0, 0, _xSize, 260,
       parentWindow, (HMENU)(UINT_PTR)id, g_hInstance))
     return E_FAIL;
@@ -118,7 +119,6 @@ HRESULT CPanel::Create(HWND mainWindow, HWND parentWindow, UINT id,
 }
 
 // extern UInt32 g_NumMessages;
-
 LRESULT CPanel::OnMessage(UINT message, WPARAM wParam, LPARAM lParam)
 {
   // g_NumMessages++;
@@ -144,6 +144,12 @@ LRESULT CPanel::OnMessage(UINT message, WPARAM wParam, LPARAM lParam)
       LoadFullPathAndShow();
       return 0;
     #endif
+    case WM_COMMAND:
+      if (HIWORD(wParam) == EN_CHANGE && LOWORD(wParam) == _panelFindID)
+      {
+        OnPanelFindEditChange();
+      }
+      break;
     case WM_TIMER:
       OnTimer();
       return 0;
@@ -165,15 +171,19 @@ LRESULT CMyListView::OnMessage(UINT message, WPARAM wParam, LPARAM lParam)
   if (message == WM_CHAR)
   {
     UINT scanCode = (UINT)((lParam >> 16) & 0xFF);
-    bool extended = ((lParam & 0x1000000) != 0);
+    // bool extended = ((lParam & 0x1000000) != 0);
     UINT virtualKey = MapVirtualKey(scanCode, 1);
     if (virtualKey == VK_MULTIPLY || virtualKey == VK_ADD ||
         virtualKey == VK_SUBTRACT)
       return 0;
-    if ((wParam == '/' && extended)
-        || wParam == '\\' || wParam == '/')
+    if (wParam == '\\')
     {
       _panel->OpenDrivesFolder();
+      return 0;
+    }
+    else if (wParam == '/')
+    {
+      _panel->EnterFindMode();
       return 0;
     }
   }
@@ -432,6 +442,9 @@ bool CPanel::OnCreate(CREATESTRUCT * /* createStruct */)
   _ascending = true;
   _lastFocusedIsList = true;
 
+  // Create _panelFind on top of _listView
+  _panelFind.Create(L"Window name", g_hInstance, this, (HWND)*this, _panelFindID);
+
   DWORD style = WS_CHILD | WS_VISIBLE; //  | WS_BORDER ; // | LVS_SHAREIMAGELISTS; //  | LVS_SHOWSELALWAYS;
 
   style |= LVS_SHAREIMAGELISTS;
@@ -445,7 +458,9 @@ bool CPanel::OnCreate(CREATESTRUCT * /* createStruct */)
 
   style |= kStyles[_listViewMode]
     | WS_TABSTOP
-    | LVS_EDITLABELS;
+    | LVS_EDITLABELS
+    | WS_CLIPCHILDREN
+    | WS_CLIPSIBLINGS;
   if (_mySelectMode)
     style |= LVS_SINGLESEL;
 
@@ -535,6 +550,13 @@ bool CPanel::OnCreate(CREATESTRUCT * /* createStruct */)
       IDB_VIEW_SMALL_COLOR,
       (LPCTBBUTTON)&tbb, Z7_ARRAY_SIZE(tbb),
       0, 0, 0, 0, sizeof (TBBUTTON)));
+
+  // Creating child window here means it goes behind the list view.
+  // _panelFind.Attach(::CreateWindowEx(0, L"EDIT", L"E:\\bk",
+  //                     WS_VISIBLE | WS_CHILD | WS_BORDER | ES_LEFT,
+  //                     87, 81, 150, 17,
+  //                     main_window.hwnd,
+  //                     (HMENU)5, hInstance, NULL);)
 
   #ifndef UNDER_CE
   // Load ComboBoxEx class
@@ -687,6 +709,7 @@ void CPanel::ChangeWindowSize(int xSize, int ySize)
         MyMax(xSize - kStartXPos - 10, kStartXPos), 0);
   }
   _listView.Move(0, kHeaderSize, xSize, yListViewSize);
+  _panelFind.Move(0, kHeaderSize + yListViewSize - kStatusBarSize, xSize, kStatusBarSize);
   _statusBar.Move(0, kHeaderSize + yListViewSize, xSize, kStatusBarSize);
   // _statusBar2.MoveWindow(0, kHeaderSize + yListViewSize + kStatusBarSize, xSize, kStatusBar2Size);
   // _statusBar.MoveWindow(0, 100, xSize, kStatusBarSize);

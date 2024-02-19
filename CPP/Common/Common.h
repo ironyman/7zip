@@ -313,6 +313,7 @@ _Pragma("GCC diagnostic pop")
 #include "MyWindows.h"
 
 void __cdecl Z7DbgPrintA(const char *format, ...);
+void __cdecl Z7DbgPrintW(const wchar_t *format, ...);
 VOID
 DbgDumpHex(PBYTE pbData, SIZE_T cbData);
 void DbgDumpRange(PVOID begin, PVOID end, PCSTR format, ...);
