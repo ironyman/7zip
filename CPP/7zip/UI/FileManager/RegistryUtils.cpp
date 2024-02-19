@@ -108,6 +108,7 @@ static void ReadOption(CKey &key, LPCTSTR value, bool &dest)
     dest = enabled;
 }
 
+[[maybe_unused]]
 static void ReadOption(CKey &key, LPCTSTR value, UInt32 &dest)
 {
   UInt32 data = false;

@@ -2,6 +2,7 @@
 #include <windowsx.h>
 #include "PanelFind.h"
 #include "Panel.h"
+#include "Debounce.h"
 #include "../../../Windows/Window.h"
 
 bool CPanelFind::Create(PCWSTR text, HINSTANCE hInstance, CPanel *panel, HWND hwndParent, UINT id)

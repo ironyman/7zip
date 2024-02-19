@@ -14,7 +14,6 @@ FM_OBJS = \
   $O\App.obj \
   $O\BrowseDialog.obj \
   $O\ClassDefs.obj \
-  $O\Debounce.obj \
   $O\EnumFormatEtc.obj \
   $O\ExtractCallback.obj \
   $O\FileFolderPluginOpen.obj \

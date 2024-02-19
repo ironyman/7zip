@@ -182,6 +182,7 @@ HRESULT DataObject_SetData_HGLOBAL(IDataObject *dataObject, CLIPFORMAT cf, NCOM:
 {
   FORMATETC etc = INIT_FORMATETC_HGLOBAL(cf);
   RINOK(dataObject->SetData(&etc, &medium, TRUE));
+  return S_OK;
 }
 
 static HRESULT DataObject_GetData_HDROP_Names(IDataObject *dataObject, UStringVector &names)
