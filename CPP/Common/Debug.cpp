@@ -46,6 +46,8 @@ void __cdecl Z7DbgPrintW(const wchar_t *format, ...)
   // *p   = '\0';
 
   OutputDebugStringW(buf);
+  // There's no terminal
+  //   wprintf(L"%s", buf);
 }
 
 

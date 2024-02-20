@@ -24,7 +24,6 @@ struct Debounce
     };
     F callback;
     PTP_TIMER timer;
-    FILETIME delay;
     PVOID context;
     int delayMs;
     std::queue<std::future<void>> contextDeletionFutures;
@@ -35,8 +34,6 @@ struct Debounce
     Debounce(F callback, const int &delayMs)
     {
         this->delayMs = delayMs;
-        this->delay.dwHighDateTime = 0;
-        this->delay.dwLowDateTime = -delayMs*1000*10;
         this->callback = callback;
         this->timer = nullptr;
         this->context = nullptr;
@@ -102,7 +99,20 @@ struct Debounce
         auto callContext = new CallbackContext<F, decltype(args)...>{std::tuple<decltype(args)...>(std::forward<decltype(args)>(args)...), this->callback};
 
         this->context = (PVOID)callContext;
-        SetThreadpoolTimer(this->timer, &this->delay, 0, 0);
+
+        FILETIME dueTime;
+        // GetSystemTimeAsFileTime(&dueTime);
+        // ULONGLONG ft = (ULONGLONG)dueTime.dwHighDateTime << 32 | dueTime.dwLowDateTime; // Convert to 64-bit integer
+        // ft += delayMs*1000*10; // Add 1 second in 100-nanosecond intervals
+        // dueTime.dwLowDateTime = (DWORD)ft;
+        // dueTime.dwHighDateTime = (DWORD)(ft >> 32);
+
+        ULARGE_INTEGER ulDueTime;
+        ulDueTime.QuadPart = -delayMs*1000*10LL;  // 1 second in 100-nanosecond intervals
+        dueTime.dwLowDateTime = ulDueTime.LowPart;
+        dueTime.dwHighDateTime = ulDueTime.HighPart;
+
+        SetThreadpoolTimer(this->timer, &dueTime, 0, 0);
 
         while (!contextDeletionFutures.empty() && contextDeletionFutures.front().wait_for(std::chrono::nanoseconds(1)) == std::future_status::ready)
         {

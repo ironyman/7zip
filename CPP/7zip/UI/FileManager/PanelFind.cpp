@@ -121,14 +121,42 @@ void CPanel::OnPanelFindEditChange()
 
 void CPanel::OnPanelFindEditChangeDebouncedHandler()
 {
-  int textLen = Edit_GetTextLength(this->_panelFind);
+  int textLen = Edit_GetTextLength(this->_panelFind) + 1;
   UString text;
-  Edit_GetText(this->_panelFind, text.GetBuf(textLen), textLen);
+  Edit_GetText(this->_panelFind, text.GetBuf_SetEnd(textLen), textLen);
   FindNextItem(text);
 }
 
 void CPanel::FindNextItem(UString const& text)
 {
   // MessageBox(*this, (LPCWSTR)text.GetBuf(),  NULL, MB_OK);
-  Z7DbgPrintW((LPCWSTR)text.GetBuf());
+  Z7DbgPrintW(L"FindNextItem %s\n", (LPCWSTR)text.GetBuf());
+
+  UString lowerCaseText(text);
+  lowerCaseText.MakeLower_Ascii();
+
+  int searchStart = 0;
+  for (unsigned i = 0; i < _selectedStatusVector.Size(); i++)
+  {
+    if (_selectedStatusVector[i])
+    {
+      searchStart = i;
+      SelectAll(false);
+      break;
+    }
+  }
+
+  UString itemName;
+  for (unsigned i = searchStart; i < _selectedStatusVector.Size(); i++)
+  {
+    GetItemName(i, itemName);
+    itemName.MakeLower_Ascii();
+    if (itemName.Find(lowerCaseText) != -1)
+    {
+      _selectedStatusVector[i] = true;
+      break;
+    }
+  }
+
+  UpdateSelection();
 }
