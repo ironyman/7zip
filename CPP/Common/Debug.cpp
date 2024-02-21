@@ -1,6 +1,10 @@
 #include <StdAfx.h>
 #include <cstdarg>
 #include <cstdio>
+#include <set>
+#include <string>
+
+std::set<std::wstring> g_debugTags;
 
 void __cdecl Z7DbgPrintA(const char *format, ...)
 {
@@ -50,6 +54,10 @@ void __cdecl Z7DbgPrintW(const wchar_t *format, ...)
   //   wprintf(L"%s", buf);
 }
 
+void Z7DbgEnableTag(const wchar_t *tag)
+{
+  g_debugTags.insert(tag);
+}
 
 VOID
 DbgDumpHex(PBYTE pbData, SIZE_T cbData)

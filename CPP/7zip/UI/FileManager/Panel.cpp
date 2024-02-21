@@ -265,6 +265,7 @@ LRESULT CMyListView::OnMessage(UINT message, WPARAM wParam, LPARAM lParam)
       case VK_ESCAPE:
       {
         DeselectAll();
+        _panel->ExitFindMode();
         return 0;
       }
       break;
@@ -708,7 +709,14 @@ void CPanel::ChangeWindowSize(int xSize, int ySize)
     _headerComboBox.Move(kStartXPos, 2,
         MyMax(xSize - kStartXPos - 10, kStartXPos), 0);
   }
-  _listView.Move(0, kHeaderSize, xSize, yListViewSize);
+  if (_findMode)
+  {
+    _listView.Move(0, kHeaderSize, xSize, yListViewSize - kStatusBarSize);
+  }
+  else
+  {
+    _listView.Move(0, kHeaderSize, xSize, yListViewSize);
+  }
   _panelFind.Move(0, kHeaderSize + yListViewSize - kStatusBarSize, xSize, kStatusBarSize);
   _statusBar.Move(0, kHeaderSize + yListViewSize, xSize, kStatusBarSize);
   // _statusBar2.MoveWindow(0, kHeaderSize + yListViewSize + kStatusBarSize, xSize, kStatusBar2Size);

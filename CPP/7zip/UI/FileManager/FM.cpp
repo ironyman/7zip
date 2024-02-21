@@ -702,6 +702,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE /* hPrevInstance */,
 {
   g_hInstance = hInstance;
 
+  Z7DbgEnableTags(L"Find");
+
   try
   {
     try

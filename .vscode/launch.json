@@ -7,7 +7,7 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug 7zfm",
+            "name": "Debug 7zfm with lldb",
             "program": "${workspaceFolder}/CPP/7zip/UI/FileManager/x64/7zfm.exe",
             "args": [],
             "cwd": "${workspaceFolder}",
@@ -15,7 +15,7 @@
         },
         {
             // $err in debug console to gle
-            "name": "(Windows) Launch",
+            "name": "Debug 7zfm with vsdbg",
             "type": "cppvsdbg",
             "request": "launch",
             "program": "${workspaceFolder}/CPP/7zip/UI/FileManager/x64/7zfm.exe",
@@ -23,8 +23,8 @@
             "stopAtEntry": false,
             "cwd": "${fileDirname}",
             "environment": [],
-            "console": "externalTerminal",
-            "preLaunchTask": "build 7zfm"
+            "preLaunchTask": "build 7zfm",
+            "internalConsoleOptions": "openOnSessionStart"
         },
         {
             "type": "lldb",

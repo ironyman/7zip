@@ -707,7 +707,7 @@ bool CPanel::OnNotifyList(LPNMHDR header, LRESULT &result)
 
     case NM_CUSTOMDRAW:
     {
-      if (_mySelectMode || (_markDeletedItems && _thereAreDeletedItems))
+      if (_mySelectMode || (_markDeletedItems && _thereAreDeletedItems) || _findMode)
         return OnCustomDraw((LPNMLVCUSTOMDRAW)header, result);
       break;
     }
@@ -723,6 +723,11 @@ bool CPanel::OnNotifyList(LPNMHDR header, LRESULT &result)
       Post_Refresh_StatusBar();
       break;
     }
+    // How does this help??
+    case NM_KILLFOCUS:
+    {
+      return true;
+    }
     // case LVN_BEGINRDRAG:
   }
   return false;
@@ -730,57 +735,69 @@ bool CPanel::OnNotifyList(LPNMHDR header, LRESULT &result)
 
 bool CPanel::OnCustomDraw(LPNMLVCUSTOMDRAW lplvcd, LRESULT &result)
 {
+  // https://learn.microsoft.com/en-us/windows/win32/controls/about-custom-draw#responding-to-the-prepaint-notification
   switch (lplvcd->nmcd.dwDrawStage)
   {
   case CDDS_PREPAINT :
     result = CDRF_NOTIFYITEMDRAW;
     return true;
-
   case CDDS_ITEMPREPAINT:
-    /*
-    SelectObject(lplvcd->nmcd.hdc,
-    GetFontForItem(lplvcd->nmcd.dwItemSpec,
-    lplvcd->nmcd.lItemlParam) );
-    lplvcd->clrText = GetColorForItem(lplvcd->nmcd.dwItemSpec,
-    lplvcd->nmcd.lItemlParam);
-    lplvcd->clrTextBk = GetBkColorForItem(lplvcd->nmcd.dwItemSpec,
-    lplvcd->nmcd.lItemlParam);
-    */
-    const unsigned realIndex = (unsigned)lplvcd->nmcd.lItemlParam;
-    lplvcd->clrTextBk = _listView.GetBkColor();
-    if (_mySelectMode)
     {
-      if (realIndex != kParentIndex && _selectedStatusVector[realIndex])
-       lplvcd->clrTextBk = RGB(255, 192, 192);
-    }
+      /*
+      SelectObject(lplvcd->nmcd.hdc,
+      GetFontForItem(lplvcd->nmcd.dwItemSpec,
+      lplvcd->nmcd.lItemlParam) );
+      lplvcd->clrText = GetColorForItem(lplvcd->nmcd.dwItemSpec,
+      lplvcd->nmcd.lItemlParam);
+      lplvcd->clrTextBk = GetBkColorForItem(lplvcd->nmcd.dwItemSpec,
+      lplvcd->nmcd.lItemlParam);
+      */
+      const unsigned realIndex = (unsigned)lplvcd->nmcd.lItemlParam;
+      // lplvcd->clrTextBk = _listView.GetBkColor();
+      if (_mySelectMode)
+      {
+        if (realIndex != kParentIndex && _selectedStatusVector[realIndex])
+          lplvcd->clrTextBk = RGB(255, 192, 192);
+      }
 
-    if (_markDeletedItems && _thereAreDeletedItems)
-    {
-      if (IsItem_Deleted(realIndex))
-        lplvcd->clrText = RGB(255, 0, 0);
-    }
-    // lplvcd->clrText = RGB(0, 0, 0);
-    // result = CDRF_NEWFONT;
-    result = CDRF_NOTIFYITEMDRAW;
-    return true;
+      // I don't think _markDeletedItems is being used yet?
+      _markDeletedItems = false;
+      if (_markDeletedItems && _thereAreDeletedItems)
+      {
+        if (IsItem_Deleted(realIndex))
+          lplvcd->clrText = RGB(255, 0, 0);
+      }
 
-    // return false;
-    // return true;
-    /*
-    case CDDS_SUBITEM | CDDS_ITEMPREPAINT:
-    if (lplvcd->iSubItem == 0)
-    {
-    // lplvcd->clrText = RGB(255, 0, 0);
-    lplvcd->clrTextBk = RGB(192, 192, 192);
-    }
-    else
-    {
-    lplvcd->clrText = RGB(0, 0, 0);
-    lplvcd->clrTextBk = RGB(255, 255, 255);
-    }
-    return true;
-    */
+      if (_findMode && realIndex != kParentIndex && _selectedStatusVector[realIndex])
+      {
+        // lplvcd->iStateId = CDIS_CHECKED | CDIS_SELECTED;
+        // lplvcd->iIconEffect = ILD_MASK;
+        // lplvcd->clrFace = RGB(0, 0x78, 0xD7);
+        lplvcd->clrText = RGB(0xFF, 0xFF, 0xFF);
+        lplvcd->clrTextBk = RGB(0, 0x78, 0xD7);
+      }
+      // lplvcd->clrText = RGB(0, 0, 0);
+      result = CDRF_NEWFONT;
+      // result = CDRF_NOTIFYITEMDRAW;
+      return true;
 
+      // return false;
+      // return true;
+      /*
+      case CDDS_SUBITEM | CDDS_ITEMPREPAINT:
+      if (lplvcd->iSubItem == 0)
+      {
+      // lplvcd->clrText = RGB(255, 0, 0);
+      lplvcd->clrTextBk = RGB(192, 192, 192);
+      }
+      else
+      {
+      lplvcd->clrText = RGB(0, 0, 0);
+      lplvcd->clrTextBk = RGB(255, 255, 255);
+      }
+      return true;
+      */
+    }
         /* At this point, you can change the background colors for the item
         and any subitems and return CDRF_NEWFONT. If the list-view control
         is in report mode, you can simply return CDRF_NOTIFYSUBITEMREDRAW

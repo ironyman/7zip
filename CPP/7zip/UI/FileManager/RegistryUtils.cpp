@@ -159,8 +159,9 @@ void CFmSettings::Load()
      to select group of files. We need to implement additional
      way to select files in any column as in Explorer.
      Then we can enable (FullRow == true) default mode. */
-  // FullRow = true;
-  FullRow = false;
+  FullRow = true;
+  // We default to true to prevent flickering in find mode when we draw the custom background for find result.
+  // FullRow = false;
   ShowGrid = false;
   SingleClick = false;
   AlternativeSelection = false;

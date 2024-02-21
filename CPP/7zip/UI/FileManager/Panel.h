@@ -1005,7 +1005,7 @@ public:
   Debounce<void (*)(CPanel*)> _debounceOnPanelFindEditChange;
   void EnterFindMode();
   void ExitFindMode();
-  void FindNextItem(UString const& text);
+  void FindNextItem(UString const& query, int skip);
   void OnPanelFindEditChange();
   void OnPanelFindEditChangeDebouncedHandler();
   // CPanel::OnPanelFindEditChangeDebouncedHandler, 400);
