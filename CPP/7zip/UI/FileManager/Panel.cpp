@@ -348,10 +348,10 @@ LRESULT CMyComboBoxEdit::OnMessage(UINT message, WPARAM wParam, LPARAM lParam)
     case WM_KEYDOWN:
       switch (wParam)
       {
-        case VK_TAB:
-          // SendMessage(hwndMain, WM_ENTER, 0, 0);
-          _panel->SetFocusToList();
-          return 0;
+        // case VK_TAB:
+        //   // SendMessage(hwndMain, WM_ENTER, 0, 0);
+        //   _panel->SetFocusToList();
+        //   return 0;
         case VK_F9:
         {
           bool alt = IsKeyDown(VK_MENU);
@@ -595,7 +595,7 @@ bool CPanel::OnCreate(CREATESTRUCT * /* createStruct */)
   _comboBoxEdit.Attach(_headerComboBox.GetEditControl());
 
   // Turn file path auto completion.
-  SHAutoComplete(_headerComboBox.GetEditControl(), SHACF_FILESYSTEM | SHACF_AUTOSUGGEST_FORCE_ON);
+  SHAutoComplete(_headerComboBox.GetEditControl(), SHACF_FILESYSTEM | SHACF_AUTOSUGGEST_FORCE_ON | SHACF_USETAB);
 
   // _comboBoxEdit.SendMessage(CCM_SETUNICODEFORMAT, (WPARAM)(BOOL)TRUE, 0);
 
