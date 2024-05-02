@@ -368,12 +368,7 @@ bool CPanel::OnKeyDown(LPNMLVKEYDOWN keyDownInfo, LRESULT &result)
         return true;
       }
     case 'F':
-      if (ctrl && shift)
-      {
-        FindIgrep();
-        return true;
-      }
-      else if (ctrl)
+      if (ctrl)
       {
         FindFzf();
         return true;

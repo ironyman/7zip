@@ -734,7 +734,7 @@ bool ExecuteFileCommand(unsigned id)
     case IDM_OPEN_EXPLORER: g_App.OpenItemExplorer(); break;
     case IDM_COPY_PATH: g_App.CopyItemPath(); break;
     case IDM_FIND_FZF: g_App.FindFzf(); break;
-    case IDM_FIND_IGREP: g_App.FindIgrep(); break;
+    // case IDM_FIND_IGREP: g_App.FindIgrep(); break;
 
     case IDM_OPEN_OUTSIDE: g_App.OpenItemOutside(); break;
     case IDM_FILE_VIEW: g_App.EditItem(false); break;

@@ -881,7 +881,7 @@ public:
   void OpenInSelectedItem(UString const& command, UString const& operation = L"");
   void CopyItemPath();
   void FindFzf();
-  void FindIgrep();
+  void FindIgrep(UString text);
 
   void OpenFolderExternal(unsigned index);
 

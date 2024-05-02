@@ -1484,12 +1484,13 @@ void CPanel::FindFzf()
   );
 }
 
-void CPanel::FindIgrep()
+void CPanel::FindIgrep(UString text)
 {
   auto cwd = GetFsPath();
-  auto that = this;
+  // auto that = this;
   auto findProc = NWindows::CProcess();
-
-  findProc.Create(L"conhost", L"ig", cwd, NULL);
-  findProc.Wait();
+  findProc._overlapWindow = TRUE;
+  UString cmd = UString(L"ig \"") + text + L"\"";
+  findProc.Create(L"conhost", cmd.GetBuf(), cwd, NULL);
+  // findProc.Wait();
 }

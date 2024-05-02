@@ -57,6 +57,17 @@ LRESULT CPanelFind::OnMessage(UINT message, WPARAM wParam, LPARAM lParam)
             }
             return 0;
           }
+          break;
+        case 'F':
+          if (ctrl)
+          {
+            int textLen = Edit_GetTextLength(*this) + 1;
+            UString text;
+            Edit_GetText(*this, text.GetBuf_SetEnd(textLen), textLen);
+            _panel->FindIgrep(text);
+            return 0;
+          }
+          break;
       }
       break;
     }
@@ -79,6 +90,9 @@ LRESULT CPanelFind::OnMessage(UINT message, WPARAM wParam, LPARAM lParam)
         }
         case '\n':
           // Prevent MessageBeep from ctrl enter.
+          return 0;
+        case 6:
+          // Prevent MessageBeep from ctrl f, which for some reasons triggers WM_CHAR with wParam == 6.
           return 0;
       }
     }
