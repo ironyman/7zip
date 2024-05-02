@@ -442,7 +442,6 @@ WRes CProcess::WaitAndRun(std::function<void(UString)> const& fn)
   NWindows::CThread thread;
   waiter->owner = this;
   const WRes wres = thread.Create(CThreadProcessWaitSync::MyThreadFunction, waiter);
-  _deleteSelf = TRUE;
   return wres;
 }
 
@@ -542,7 +541,6 @@ WRes CProcess::WaitAndRunOverlapped(std::function<void(UString)> const& fn)
     NWindows::CThread thread;
     waiter->owner = this;
     const WRes wres = thread.Create(CThreadProcessWaitOverlapped::MyThreadFunction, waiter);
-    _deleteSelf = TRUE;
     return wres;
   }
   else

@@ -66,7 +66,6 @@ class CProcess: public CHandle
 public:
   HANDLE _hStdoutRead, _hStdoutWrite;
   CByteVector _readBuffer;
-  BOOL _deleteSelf{};
   BOOL _overlapWindow{};
   BOOL _readOutput{};
   BOOL _createPipeOnly{};

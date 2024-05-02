@@ -38,6 +38,7 @@ FM_OBJS = \
   $O\PanelItemOpen.obj \
   $O\PanelItems.obj \
   $O\PanelKey.obj \
+  $O\ExternalTools.obj \
   $O\PanelListNotify.obj \
   $O\PanelMenu.obj \
   $O\PanelOperations.obj \

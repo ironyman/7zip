@@ -43,6 +43,8 @@ BEGIN
     MENUITEM "Open Inside *",               IDM_OPEN_INSIDE_ONE
     MENUITEM "Open Inside #",               IDM_OPEN_INSIDE_PARSER
     MENUITEM "Open O&utside\tShift+Enter",  IDM_OPEN_OUTSIDE
+    MENUITEM "Find (fzf)\tCtrl+F",          IDM_FIND_FZF
+    MENUITEM "Find (igrep)\tCtrl+Shift+F",  IDM_FIND_IGREP
     MENUITEM "&View\tF3",                   IDM_FILE_VIEW
     MENUITEM "&Edit\tF4",                   IDM_FILE_EDIT
     MY_MENUITEM_SEPARATOR

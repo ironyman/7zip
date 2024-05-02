@@ -9,8 +9,6 @@
 #include "App.h"
 #include "../../../Windows/ProcessUtils.h"
 
-#include <shlwapi.h>
-
 using namespace NWindows;
 
 // #define kHelpTopic "FM/index.htm"
@@ -370,94 +368,14 @@ bool CPanel::OnKeyDown(LPNMLVKEYDOWN keyDownInfo, LRESULT &result)
         return true;
       }
     case 'F':
-      if (ctrl)
+      if (ctrl && shift)
       {
-        auto cwd = GetFsPath();
-        auto findProc = new CProcess();
-        findProc->_overlapWindow = TRUE;
-        findProc->_readOutput = TRUE;
-
-        // Doubly null terminated string, last null is for list of null terminated strings.
-        // If you're setting this in shell it would be
-        // $env:FZF_DEFAULT_COMMAND = 'rg --hidden --no-ignore -l --max-depth 5 ""'
-        UString envStr = L"FZF_DEFAULT_COMMAND=rg --hidden --no-ignore -l --max-depth 5 \"\"";
-        auto env = CRecordVector<WCHAR>(envStr.Ptr(), envStr.Ptr() + envStr.Len() + 1); // Include null terminator
-        env.Add(0);
-
-        UString pipeName = MyGetNextPipeName();
-        int backSlash = pipeName.ReverseFind_PathSepar();
-        constexpr WCHAR cmdTemplate[] = LR"(
-powershell -command " & { $output = fzf;
-$pipeName = '%s';
-$npipeClient = new-object System.IO.Pipes.NamedPipeClientStream('.', $pipeName, [System.IO.Pipes.PipeDirection]::Out,
-  [System.IO.Pipes.PipeOptions]::None,
-	[System.Security.Principal.TokenImpersonationLevel]::Impersonation);
-$npipeClient.Connect();
-$script:pipeWriter = new-object System.IO.StreamWriter($npipeClient);
-$pipeWriter.AutoFlush = $true;
-$pipeWriter.WriteLine($output);
-$pipeWriter.Close(); }"
-        )";
-        WCHAR cmd[4096]{};
-        #pragma warning (disable : 4774 )
-        _snwprintf_s(cmd, ARRAYSIZE(cmd), ARRAYSIZE(cmd), cmdTemplate, pipeName.Ptr() + backSlash + 1);
-
-        // No newlines allowed.
-        for (auto & ch : cmd)
-        {
-          if (ch == '\n')
-          {
-            ch = ' ';
-          }
-        }
-
-
-        // Use conhost, it's faster.
-        findProc->_createPipeOnly = TRUE;
-        findProc->Create(L"conhost", cmd, cwd, (LPVOID)env.begin());
-
-        // Use default terminal, need to set
-        // findProc->_createPipeOnly = FALSE
-        // findProc->Create(L"fzf.exe", L"", cwd, (LPVOID)env.begin());
-
-        // to test
-        // findProc->Create(L"cmd.exe", L"", cwd, (LPVOID)env.Ptr());
-        // findProc->Create(L"conhost", L"fzf.exe", cwd);
-        // findProc->Create(L"conhost", L"powershell -noexit -command fzf.exe", cwd);
-        // findProc->Create(L"conhost", L"powershell -command \" & { $output = fzf; [Console]::Error.WriteLine($output) }\"", cwd, (LPVOID)env.begin());
-
-        auto that = this;
-        if (findProc->WaitAndRun([that, cwd](UString path)
-          {
-            SetForegroundWindow(g_HWND);
-            path.Insert(0, cwd.Ptr());
-            if (!PathIsDirectory(path))
-            {
-              path = path.GetDirectory();
-            }
-
-            // Actually don't even need the SendMessage(..., kOpenPath, ...)
-            if (IsGUIThread(TRUE))
-            {
-              that->OnNotifyComboBoxEnter(path);
-            }
-            else
-            {
-              // SendMessage(g_HWND, kOpenPath, (WPARAM)&path, NULL);
-            }
-          }) != 0
-        )
-        {
-          delete findProc;
-        }
-
-        // auto path = findProc.WaitRead();
-
-        // if (!PathIsDirectory(path))
-        // {
-        //   path = path.GetDirectory();
-        // }
-        // OnNotifyComboBoxEnter(path);
+        FindIgrep();
+        return true;
+      }
+      else if (ctrl)
+      {
+        FindFzf();
         return true;
       }
   }

@@ -21,6 +21,10 @@
 #include "Panel.h"
 #include "PropertyName.h"
 #include "RootFolder.h"
+#include "ExternalTools.h"
+#include "App.h"
+
+#include <shlwapi.h>
 
 using namespace NWindows;
 
@@ -1449,4 +1453,43 @@ void CPanel::OnTimer()
   if (wasChanged == 0)
     return;
   OnReload(true); // onTimer
+}
+
+void CPanel::FindFzf()
+{
+  auto cwd = GetFsPath();
+  auto that = this;
+  StartFzf(cwd, [that, cwd](UString path)
+    {
+      SetForegroundWindow(g_HWND);
+      path.Insert(0, cwd.Ptr());
+      auto dir = path;
+      if (!PathIsDirectory(dir))
+      {
+        dir = dir.GetDirectory();
+      }
+      auto name = path.GetFileName();
+      name.TrimRight();
+      // Actually don't even need the SendMessage(..., kOpenPath, ...)
+      if (IsGUIThread(TRUE))
+      {
+        that->OnNotifyComboBoxEnter(path);
+        that->FindNextItem(name, 0);
+      }
+      else
+      {
+        // SendMessage(g_HWND, kOpenPath, (WPARAM)&path, NULL);
+      }
+    }
+  );
+}
+
+void CPanel::FindIgrep()
+{
+  auto cwd = GetFsPath();
+  auto that = this;
+  auto findProc = NWindows::CProcess();
+
+  findProc.Create(L"conhost", L"ig", cwd, NULL);
+  findProc.Wait();
 }

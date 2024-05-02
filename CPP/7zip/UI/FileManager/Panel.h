@@ -880,6 +880,8 @@ public:
   void OpenSelectedItem(UString const& command, UString const& operation = L"", int nShow = SW_SHOWNORMAL);
   void OpenInSelectedItem(UString const& command, UString const& operation = L"");
   void CopyItemPath();
+  void FindFzf();
+  void FindIgrep();
 
   void OpenFolderExternal(unsigned index);
 

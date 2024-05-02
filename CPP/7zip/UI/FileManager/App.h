@@ -139,6 +139,8 @@ public:
   void OpenItemVscode() { GetFocusedPanel().OpenSelectedItem(L"code.cmd", L"", SW_HIDE); }
   void OpenItemTerminal() { GetFocusedPanel().OpenInSelectedItem(L"powershell.exe"); }
   void OpenItemExplorer() { GetFocusedPanel().OpenInSelectedItem(L"", L"explore"); }
+  void FindFzf() { GetFocusedPanel().FindFzf(); }
+  void FindIgrep() { GetFocusedPanel().FindIgrep(); }
   void CopyItemPath() { GetFocusedPanel().CopyItemPath(); }
   void EditItem(bool useEditor) { GetFocusedPanel().EditItem(useEditor); }
   void Rename() { GetFocusedPanel().RenameFile(); }
