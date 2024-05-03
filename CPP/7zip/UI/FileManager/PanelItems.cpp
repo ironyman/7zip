@@ -1463,18 +1463,10 @@ void CPanel::FindFzf()
     {
       SetForegroundWindow(g_HWND);
       path.Insert(0, cwd.Ptr());
-      auto dir = path;
-      if (!PathIsDirectory(dir))
-      {
-        dir = dir.GetDirectory();
-      }
-      auto name = path.GetFileName();
-      name.TrimRight();
       // Actually don't even need the SendMessage(..., kOpenPath, ...)
       if (IsGUIThread(TRUE))
       {
-        that->OnNotifyComboBoxEnter(path);
-        that->FindNextItem(name, 0);
+        that->OnNotifyComboBoxEnterShowInDirectory(path);
       }
       else
       {

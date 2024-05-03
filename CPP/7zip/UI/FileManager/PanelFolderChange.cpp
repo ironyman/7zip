@@ -25,6 +25,8 @@
 #include "resource.h"
 #include "Path.h"
 
+#include <shlwapi.h>
+
 using namespace NWindows;
 using namespace NFile;
 using namespace NFind;
@@ -444,10 +446,56 @@ void CPanel::LoadFullPathAndShow()
 LRESULT CPanel::OnNotifyComboBoxEnter(const UString &s)
 {
   auto path = ExpandEnvironmentStringsWrapper(std::wstring(s == L"~" ? L"%USERPROFILE%" : (const wchar_t *)s));
-  if (path && BindToPathAndRefresh(GetUnicodeString(UString((*path).data()))) == S_OK)
+  if (!path)
+  {
+    return FALSE;
+  }
+
+  if (BindToPathAndRefresh(GetUnicodeString(UString((*path).data()))) == S_OK)
   {
     bool shouldReturn;
-    _panelCallback->OnOpenFolder(shouldReturn);
+    _panelCallback->OnOpenFolder(shouldReturn, UString((*path).data()));
+    if (shouldReturn)
+    {
+      return TRUE;
+    }
+
+    PostMsg(kSetFocusToListView);
+    return TRUE;
+  }
+  return FALSE;
+}
+
+template<typename T, typename F>
+auto map_optional(std::optional<T>& opt, F func) {
+    if (opt.has_value()) {
+        return std::optional<std::invoke_result_t<F, T>>(func(opt.value()));
+    } else {
+        return std::optional<std::invoke_result_t<F, T>>();
+    }
+}
+
+LRESULT CPanel::OnNotifyComboBoxEnterShowInDirectory(const UString &s)
+{
+  auto pathStdStr = ExpandEnvironmentStringsWrapper(std::wstring(s == L"~" ? L"%USERPROFILE%" : (const wchar_t *)s));
+  auto path = map_optional(pathStdStr, [](std::wstring s) { return UString(s.data()); });
+  if (!path)
+  {
+    return FALSE;
+  }
+
+  auto dir = path->GetDirectory();
+  if (!PathIsDirectory(dir))
+  {
+    dir = dir.GetDirectory();
+  }
+  auto name = path->GetFileName();
+  name.TrimRight();
+
+  if (BindToPathAndRefresh(GetUnicodeString(dir)) == S_OK)
+  {
+    bool shouldReturn;
+    _panelCallback->OnOpenFolder(shouldReturn, *path);
     if (shouldReturn)
     {
       return TRUE;
@@ -482,7 +530,7 @@ bool CPanel::OnNotifyComboBoxEndEdit(PNMCBEENDEDITW info, LRESULT &result)
     // When we use Edit control and press Enter.
     UString s;
     _headerComboBox.GetText(s);
-    result = OnNotifyComboBoxEnter(s);
+    result = OnNotifyComboBoxEnterShowInDirectory(s);
     return true;
   }
   return false;

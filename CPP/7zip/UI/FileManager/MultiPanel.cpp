@@ -186,7 +186,7 @@ HRESULT CPanelCallbackImp::OnSelectedItemChanged()
   return S_OK;
 }
 
-HRESULT CPanelCallbackImp::OnOpenFolder(std::optional<std::reference_wrapper<bool>> shouldReturn)
+HRESULT CPanelCallbackImp::OnOpenFolder(std::optional<std::reference_wrapper<bool>> shouldReturn, std::optional<UString> path)
 {
   if (_app->MultiPanelMode == 0)
   {
@@ -216,6 +216,12 @@ HRESULT CPanelCallbackImp::OnOpenFolder(std::optional<std::reference_wrapper<boo
   _app->Panels[1]._listView.SetItemState_Selected(0, true);
   _app->Panels[1].SetFocusToList();
 
+  if (path.has_value())
+  {
+    auto file = path.value().GetFileName();
+    file.TrimRight();
+    _app->Panels[1].FindNextItem(file, 0);
+  }
   return S_OK;
 }
 

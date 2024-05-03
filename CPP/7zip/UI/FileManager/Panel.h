@@ -85,7 +85,7 @@ DECLARE_INTERFACE(CPanelCallback)
   virtual HRESULT OnRefreshList(bool& shouldReturn) = 0;
   virtual HRESULT OnBind(bool& shouldReturn) = 0;
   virtual HRESULT OnSelectedItemChanged() = 0;
-  virtual HRESULT OnOpenFolder(std::optional<std::reference_wrapper<bool>> shouldReturn = std::nullopt) = 0;
+  virtual HRESULT OnOpenFolder(std::optional<std::reference_wrapper<bool>> shouldReturn = std::nullopt, std::optional<UString> path = std::nullopt) = 0;
   virtual HRESULT OnOpenParentFolder() = 0;
   virtual UString OnSetComboText(UString const& text) = 0;
   virtual bool IsMultiPanelMode() = 0;
@@ -341,6 +341,8 @@ class CPanel Z7_final: public NWindows::NControl::CWindow2
   #ifndef UNDER_CE
 
   LRESULT OnNotifyComboBoxEnter(const UString &s);
+  LRESULT OnNotifyComboBoxEnterShowInDirectory(const UString &s);
+
   bool OnNotifyComboBoxEndEdit(PNMCBEENDEDITW info, LRESULT &result);
   #ifndef _UNICODE
   bool OnNotifyComboBoxEndEdit(PNMCBEENDEDIT info, LRESULT &result);
