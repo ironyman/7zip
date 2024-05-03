@@ -31,6 +31,7 @@ public:
   bool DeleteColumn(unsigned columnIndex) { return BOOLToBool(ListView_DeleteColumn(_window, columnIndex)); }
 
   int InsertColumn(unsigned columnIndex, const LVCOLUMN *columnInfo) { return ListView_InsertColumn(_window, columnIndex, columnInfo); }
+  int SetColumn(unsigned columnIndex, const LVCOLUMN *columnInfo) { return ListView_SetColumn(_window, columnIndex, columnInfo); }
   int InsertColumn(unsigned columnIndex, LPCTSTR text, int width);
   bool SetColumnOrderArray(unsigned count, const int *columns)
     { return BOOLToBool(ListView_SetColumnOrderArray(_window, count, (int *)(void *)columns)); }

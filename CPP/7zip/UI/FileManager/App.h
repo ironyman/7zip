@@ -328,6 +328,7 @@ public:
   HRESULT InitializeMultiPanel();
   HRESULT UninitializeMultiPanel();
   HRESULT SyncMultiPanel();
+  HRESULT ResizeSingleColumn();
 };
 
 

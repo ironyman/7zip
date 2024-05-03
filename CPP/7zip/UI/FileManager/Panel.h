@@ -383,6 +383,7 @@ private:
   HRESULT InitColumns();
   void DeleteColumn(unsigned index);
   void AddColumn(const CPropColumn &prop);
+  void UpdateColumn(const unsigned index, const CPropColumn &prop);
 
   void SetFocusedSelectedItem(int index, bool select);
 

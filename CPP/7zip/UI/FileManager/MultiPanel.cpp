@@ -33,6 +33,9 @@ void CApp::MoveSubWindowsMultiPanel()
   Panels[2].Move(panel2StartX, headerSize, xWidth0, ySize);
   Panels[1].Move(panel1StartX, headerSize, xWidth0, ySize);
   Panels[0].Move(0,            headerSize, xWidth0, ySize);
+  Panels[0]._xSize = Panels[1]._xSize = Panels[2]._xSize = xWidth0;
+
+  // ResizeSingleColumn();
 
   // Remove left over artifacts from resizing smaller.
   InvalidateRect(Panels[1]._mainWindow, NULL, TRUE);
@@ -81,8 +84,8 @@ HRESULT CApp::InitializeMultiPanel()
   Panels[1]._listView.SetItemState_Selected(0, true);
   MultiPanelMode = 1;
 
-  SyncMultiPanel();
   MoveSubWindowsMultiPanel();
+  SyncMultiPanel();
 
   return S_OK;
 }
@@ -99,6 +102,26 @@ HRESULT CApp::UninitializeMultiPanel()
   MultiPanelMode = 0;
 
   MoveSubWindows();
+  return S_OK;
+}
+
+HRESULT CApp::ResizeSingleColumn()
+{
+  // Make column headings fit to width of panel.
+  if (NumPanels == 3)
+  {
+    for (int i = 0; i < (int)NumPanels; ++i)
+    {
+      if (Panels[i]._visibleColumns.Size() > 0)
+      {
+        RECT rc {};
+        GetClientRect(Panels[i]._listView, &rc);
+        // Panels[i]._visibleColumns[0].Width = Panels[i]._xSize;
+        Panels[i]._visibleColumns[0].Width = rc.right - rc.left;
+        Panels[i].UpdateColumn(0, Panels[i]._visibleColumns[0]);
+      }
+    }
+  }
   return S_OK;
 }
 
@@ -150,6 +173,9 @@ HRESULT CApp::SyncMultiPanel()
       Panels[2].DeleteListItems();
     }
   }
+
+  ResizeSingleColumn();
+
   return S_OK;
 }
 
@@ -180,7 +206,7 @@ HRESULT CPanelCallbackImp::OnSelectedItemChanged()
 
   if (multiPanelReentrancyCount++ == 0)
   {
-    _app->SyncMultiPanel();
+    // _app->SyncMultiPanel();
     --multiPanelReentrancyCount;
   }
   return S_OK;

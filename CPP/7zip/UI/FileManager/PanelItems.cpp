@@ -339,6 +339,20 @@ void CPanel::AddColumn(const CPropColumn &prop)
   _listView.InsertColumn(index, &column);
 }
 
+void CPanel::UpdateColumn(const unsigned index, const CPropColumn &prop)
+{
+  LV_COLUMNW column;
+  column.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM | LVCF_ORDER;
+  column.cx = (int)prop.Width;
+  column.fmt = GetColumnAlign(prop.ID, prop.Type);
+  column.iOrder = (int)index; // must be <= _listView.ItemCount
+  column.iSubItem = (int)index; // must be <= _listView.ItemCount
+  column.pszText = const_cast<wchar_t *>((const wchar_t *)prop.Name);
+
+  _listView.SetColumn(index, &column);
+}
+
+
 
 HRESULT CPanel::RefreshListCtrl()
 {
