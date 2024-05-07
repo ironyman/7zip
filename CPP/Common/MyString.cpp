@@ -1454,6 +1454,23 @@ void UString::TrimRight() throw()
   }
 }
 
+void UString::TrimPathSepar() throw()
+{
+  const wchar_t *p = _chars;
+  unsigned i;
+  for (i = _len; i != 0; i--)
+  {
+    wchar_t c = p[(size_t)i - 1];
+    if (c != '\\' && c != '/')
+      break;
+  }
+  if (i != _len)
+  {
+    _chars[i] = 0;
+    _len = i;
+  }
+}
+
 void UString::InsertAtFront(wchar_t c)
 {
   if (_limit == _len)

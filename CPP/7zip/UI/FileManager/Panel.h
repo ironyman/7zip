@@ -89,6 +89,7 @@ DECLARE_INTERFACE(CPanelCallback)
   virtual HRESULT OnOpenParentFolder() = 0;
   virtual UString OnSetComboText(UString const& text) = 0;
   virtual bool IsMultiPanelMode() = 0;
+  virtual int GetIndex() = 0;
 };
 Z7_PURE_INTERFACES_END
 

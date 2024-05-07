@@ -80,6 +80,7 @@ void CPanelCallbackImp::PanelWasFocused() { _app->SetFocusedPanel(_index); _app-
 void CPanelCallbackImp::DragBegin() { _app->DragBegin(_index); }
 void CPanelCallbackImp::DragEnd() { _app->DragEnd(); }
 void CPanelCallbackImp::RefreshTitle(bool always) { _app->RefreshTitlePanel(_index, always); }
+int CPanelCallbackImp::GetIndex() { return _index; }
 
 void CApp::ReloadLangItems()
 {

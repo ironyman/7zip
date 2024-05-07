@@ -141,6 +141,7 @@ HRESULT CApp::SyncMultiPanel()
   if (selected.Size() > 0)
   {
     preview = Panels[1].GetItemFullPath(selected[0]).Ptr();
+    preview.TrimPathSepar();
   }
 
   // Update parent panel
@@ -163,9 +164,14 @@ HRESULT CApp::SyncMultiPanel()
   // Update preview panel
   if (Panels[2].PanelCreated)
   {
-    if (preview.Len() > 0 && PathIsDirectory(preview) && Panels[2].PanelCreated && preview != Panels[2].GetFsPath())
+    if (preview.Len() > 0 && PathIsDirectory(preview) && Panels[2].PanelCreated)
     {
-      Panels[2].BindToPathAndRefresh(preview);
+      auto panelPath = Panels[2].GetFsPath();
+      panelPath.TrimPathSepar();
+      if (panelPath != preview)
+      {
+        Panels[2].BindToPathAndRefresh(preview);
+      }
     }
     else
     {
@@ -206,7 +212,7 @@ HRESULT CPanelCallbackImp::OnSelectedItemChanged()
 
   if (multiPanelReentrancyCount++ == 0)
   {
-    // _app->SyncMultiPanel();
+    _app->SyncMultiPanel();
     --multiPanelReentrancyCount;
   }
   return S_OK;
@@ -237,8 +243,9 @@ HRESULT CPanelCallbackImp::OnOpenFolder(std::optional<std::reference_wrapper<boo
   }
 
   _app->Panels[1]._appState->FolderHistory.AddString(_app->Panels[1]._currentFolderPrefix);
-  _app->SyncMultiPanel();
-
+  // You don't need to sync the panels here, because SetItemState_Selected will trigger OnSelectedItemChanged
+  // which will sync.
+  // _app->SyncMultiPanel();
   _app->Panels[1]._listView.SetItemState_Selected(0, true);
   _app->Panels[1].SetFocusToList();
 

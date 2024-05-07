@@ -744,6 +744,7 @@ public:
 
   void TrimLeft() throw();
   void TrimRight() throw();
+  void TrimPathSepar() throw();
   void Trim()
   {
     TrimRight();
