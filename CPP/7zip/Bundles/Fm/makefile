@@ -8,6 +8,7 @@ CFLAGS = $(CFLAGS) -DZ7_LARGE_PAGES
 
 COMMON_OBJS = $(COMMON_OBJS) \
   $O\CommandLineParser.obj \
+  $O\Debug.obj \
   $O\Lang.obj \
   $O\ListFileUtils.obj \
   $O\Random.obj \
