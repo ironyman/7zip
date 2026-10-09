@@ -108,6 +108,15 @@
 #define IDM_VIEW_TIME_POPUP      760
 #define IDM_VIEW_TIME            761
 
+// the order of IDM_THEME_* items must be same as order in NTheme::EMode
+#define IDM_VIEW_THEME_POPUP     770
+#define IDM_THEME_LIGHT          771
+#define IDM_THEME_DARK           772
+#define IDM_THEME_AUTO           773
+#define IDM_THEME_FLUENT_LIGHT   774
+#define IDM_THEME_FLUENT_DARK    775
+#define IDM_THEME_FLUENT_AUTO    776
+
 #define IDM_ADD_TO_FAVORITES     800
 #define IDS_BOOKMARK             801
 

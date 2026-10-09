@@ -8,6 +8,9 @@
 namespace NWindows {
 namespace NControl {
 
+// optional callback that is called after WM_INITDIALOG processing (it's used for UI themes)
+extern void (*g_DialogInitHook)(HWND dialog);
+
 class CDialog: public CWindow
 {
   // Z7_CLASS_NO_COPY(CDialog)

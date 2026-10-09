@@ -291,6 +291,10 @@ public:
 
   void SaveToolbarChanges();
 
+  // re-applies current theme to all windows
+  void ApplyTheme();
+  void SetThemeMode(unsigned mode);
+
   void SwitchStandardToolbar()
   {
     ShowStandardToolbar = !ShowStandardToolbar;

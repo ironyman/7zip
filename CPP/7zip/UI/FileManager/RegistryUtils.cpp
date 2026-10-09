@@ -41,6 +41,7 @@ static LPCTSTR const kFlatViewName = TEXT("FlatViewArc");
 // static LPCTSTR const kShowDeletedFiles = TEXT("ShowDeleted");
 
 static LPCTSTR const kPanelMode = TEXT("PanelMode");
+static LPCTSTR const kThemeMode = TEXT("Theme");
 
 static void SaveCuString(LPCTSTR keyPath, LPCWSTR valuePath, LPCWSTR value)
 {
@@ -207,6 +208,17 @@ bool ReadFlatView(UInt32 panelIndex)
   if (key.Open(HKEY_CURRENT_USER, kCU_FMPath, KEY_READ) == ERROR_SUCCESS)
     ReadOption(key, GetFlatViewName(panelIndex), enabled);
   return enabled;
+}
+
+void SaveThemeMode(UInt32 mode) { SaveOption(kThemeMode, mode); }
+UInt32 ReadThemeMode()
+{
+  UInt32 mode = 0;
+  CKey key;
+  if (key.Open(HKEY_CURRENT_USER, kCU_FMPath, KEY_READ) == ERROR_SUCCESS)
+    if (key.QueryValue(kThemeMode, mode) != ERROR_SUCCESS)
+      mode = 0;
+  return mode;
 }
 
 void SavePanelMode(UInt32 mode) { SaveOption(kPanelMode, mode); }

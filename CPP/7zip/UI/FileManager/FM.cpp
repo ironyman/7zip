@@ -39,7 +39,10 @@
 #include "Panel.h"
 #include "RegistryUtils.h"
 #include "StringUtils.h"
+#include "Theme.h"
 #include "ViewSettings.h"
+
+#include "../../../Windows/Control/Dialog.h"
 
 #include <vector>
 
@@ -641,6 +644,10 @@ static int WINAPI WinMain2(int nCmdShow)
 
   g_App.ReloadLangItems();
 
+  // the theme must be initialized before any window (and menu) is created
+  NTheme::Init();
+  NControl::g_DialogInitHook = NTheme::OnDialogInit;
+
   MSG msg;
   if (!InitInstance (nCmdShow))
     return FALSE;
@@ -801,6 +808,13 @@ static void ExecuteCommand(UINT commandID)
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+  {
+    // menu bar and background drawing for themes
+    LRESULT res = 0;
+    if (NTheme::HandleMainWindowMessage(hWnd, message, wParam, lParam, res))
+      return res;
+  }
+
   switch (message)
   {
     case WM_COMMAND:
@@ -837,6 +851,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_CREATE:
     {
       g_HWND = hWnd;
+      NTheme::ApplyToMainWindow(hWnd);
       /*
       INITCOMMONCONTROLSEX icex;
       icex.dwSize = sizeof(INITCOMMONCONTROLSEX);
@@ -1040,13 +1055,23 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
       return 0;
     */
 
-    /*
     case WM_SETTINGCHANGE:
+      // "Auto" themes follow the light / dark app mode of Windows
+      if (g_WindowWasCreated && NTheme::OnSettingChange(lParam))
+        g_App.ApplyTheme();
       break;
-    */
+
+    case WM_DWMCOLORIZATIONCOLORCHANGED:
+      // accent color was changed
+      if (g_WindowWasCreated && NTheme::OnColorizationChange())
+        g_App.ApplyTheme();
+      break;
 
     case WM_NOTIFY:
     {
+      LRESULT res = 0;
+      if (NTheme::HandleToolBarCustomDraw((LPNMHDR)lParam, res))
+        return res;
       g_App.OnNotify((int)wParam, (LPNMHDR)lParam);
       break;
     }

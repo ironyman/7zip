@@ -153,6 +153,25 @@ LRESULT CPanel::OnMessage(UINT message, WPARAM wParam, LPARAM lParam)
     case WM_TIMER:
       OnTimer();
       return 0;
+    case WM_ERASEBKGND:
+      if (NTheme::EraseBackground(*this, (HDC)wParam))
+        return 1;
+      break;
+    case WM_CTLCOLOREDIT:
+    {
+      const HBRUSH brush = NTheme::HandleCtlColorEdit((HDC)wParam);
+      if (brush)
+        return (LRESULT)brush;
+      break;
+    }
+    case WM_NOTIFY:
+    {
+      // NM_CUSTOMDRAW from the tool bar, if there is no rebar
+      LRESULT res = 0;
+      if (NTheme::HandleToolBarCustomDraw((LPNMHDR)lParam, res))
+        return res;
+      break;
+    }
     case WM_CONTEXTMENU:
       if (OnContextMenu(HANDLE(wParam), GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)))
         return 0;
@@ -665,10 +684,31 @@ bool CPanel::OnCreate(CREATESTRUCT * /* createStruct */)
 
   SetTimer(kTimerID, kTimerElapse);
 
+  if (NTheme::IsActive())
+    ApplyTheme();
+
   // InitListCtrl();
   RefreshListCtrl();
 
   return true;
+}
+
+void CPanel::ApplyTheme()
+{
+  NTheme::ApplyToListView(_listView);
+  SetExtendedStyle();
+  if (_headerReBar)
+    NTheme::ApplyToReBar(_headerReBar);
+  NTheme::ApplyToToolBar(_headerToolBar);
+  NTheme::ApplyToComboBoxEx(_headerComboBox);
+  NTheme::ApplyToStatusBar(_statusBar);
+  NTheme::ApplyToEdit(_panelFind);
+
+  // borders and fonts were changed, so we update the layout
+  RECT rect;
+  GetClientRect(&rect);
+  OnSize(0, RECT_SIZE_X(rect), RECT_SIZE_Y(rect));
+  ::RedrawWindow(*this, NULL, NULL, RDW_INVALIDATE | RDW_ERASE | RDW_FRAME | RDW_ALLCHILDREN);
 }
 
 void CPanel::OnDestroy()

@@ -43,6 +43,7 @@
 #include "MyCom2.h"
 #include "ProgressDialog2.h"
 #include "SysIconUtils.h"
+#include "Theme.h"
 #include "PanelFind.h"
 #include "Debounce.h"
 
@@ -629,8 +630,11 @@ public:
   void SetExtendedStyle()
   {
     if (_listView)
-      _listView.SetExtendedListViewStyle(_exStyle);
+      _listView.SetExtendedListViewStyle(_exStyle |
+          (NTheme::IsActive() ? (DWORD)LVS_EX_DOUBLEBUFFER : 0));
   }
+
+  void ApplyTheme();
 
 
   bool _needSaveInfo;

@@ -707,7 +707,8 @@ bool CPanel::OnNotifyList(LPNMHDR header, LRESULT &result)
 
     case NM_CUSTOMDRAW:
     {
-      if (_mySelectMode || (_markDeletedItems && _thereAreDeletedItems) || _findMode)
+      if (_mySelectMode || (_markDeletedItems && _thereAreDeletedItems) || _findMode
+          || NTheme::NeedListCustomDraw())
         return OnCustomDraw((LPNMLVCUSTOMDRAW)header, result);
       break;
     }
@@ -753,11 +754,20 @@ bool CPanel::OnCustomDraw(LPNMLVCUSTOMDRAW lplvcd, LRESULT &result)
       lplvcd->nmcd.lItemlParam);
       */
       const unsigned realIndex = (unsigned)lplvcd->nmcd.lItemlParam;
+      const bool isMarked = (realIndex != kParentIndex && _selectedStatusVector[realIndex]);
+
+      // Fluent theme draws items itself
+      if (NTheme::DrawListItem(lplvcd,
+          _mySelectMode && isMarked,
+          _findMode && isMarked,
+          result))
+        return true;
+
       // lplvcd->clrTextBk = _listView.GetBkColor();
       if (_mySelectMode)
       {
-        if (realIndex != kParentIndex && _selectedStatusVector[realIndex])
-          lplvcd->clrTextBk = RGB(255, 192, 192);
+        if (isMarked)
+          lplvcd->clrTextBk = NTheme::GetMarkedColor();
       }
 
       // I don't think _markDeletedItems is being used yet?
@@ -768,13 +778,21 @@ bool CPanel::OnCustomDraw(LPNMLVCUSTOMDRAW lplvcd, LRESULT &result)
           lplvcd->clrText = RGB(255, 0, 0);
       }
 
-      if (_findMode && realIndex != kParentIndex && _selectedStatusVector[realIndex])
+      if (_findMode && isMarked)
       {
         // lplvcd->iStateId = CDIS_CHECKED | CDIS_SELECTED;
         // lplvcd->iIconEffect = ILD_MASK;
         // lplvcd->clrFace = RGB(0, 0x78, 0xD7);
-        lplvcd->clrText = RGB(0xFF, 0xFF, 0xFF);
-        lplvcd->clrTextBk = RGB(0, 0x78, 0xD7);
+        if (NTheme::IsActive())
+        {
+          lplvcd->clrText = NTheme::Pal().AccentText;
+          lplvcd->clrTextBk = NTheme::Pal().Accent;
+        }
+        else
+        {
+          lplvcd->clrText = RGB(0xFF, 0xFF, 0xFF);
+          lplvcd->clrTextBk = RGB(0, 0x78, 0xD7);
+        }
       }
       // lplvcd->clrText = RGB(0, 0, 0);
       result = CDRF_NEWFONT;

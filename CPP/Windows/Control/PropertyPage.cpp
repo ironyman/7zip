@@ -32,7 +32,13 @@ APIENTRY MyProperyPageProcedure(HWND dialogHWND, UINT message, WPARAM wParam, LP
     return FALSE;
   if (message == WM_INITDIALOG)
     dialog->Attach(dialogHWND);
-  try { return BoolToBOOL(dialog->OnMessage(message, wParam, lParam)); }
+  try
+  {
+    const bool res = dialog->OnMessage(message, wParam, lParam);
+    if (message == WM_INITDIALOG && g_DialogInitHook)
+      g_DialogInitHook(dialogHWND);
+    return BoolToBOOL(res);
+  }
   catch(...) { return TRUE; }
 }
 

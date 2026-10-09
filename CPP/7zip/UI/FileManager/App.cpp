@@ -25,6 +25,7 @@
 #include "LangUtils.h"
 #include "MyLoadMenu.h"
 #include "RegistryUtils.h"
+#include "Theme.h"
 #include "ViewSettings.h"
 
 #include "PropertyNameRes.h"
@@ -287,6 +288,7 @@ void CApp::ReloadToolbars()
         AddButton(_buttonsImageList, _toolBar, g_StandardButtons[i], ShowButtonsLables, LargeButtons);
 
     _toolBar.AutoSize();
+    NTheme::ApplyToToolBar(_toolBar);
   }
 }
 
@@ -295,6 +297,29 @@ void CApp::SaveToolbarChanges()
   SaveToolbar();
   ReloadToolbars();
   MoveSubWindows();
+}
+
+void CApp::ApplyTheme()
+{
+  NTheme::ApplyToMainWindow(_window);
+  if (_toolBar)
+    NTheme::ApplyToToolBar(_toolBar);
+  for (unsigned i = 0; i < kNumPanelsMax; i++)
+  {
+    CPanel &panel = Panels[i];
+    if (panel.PanelCreated && (HWND)panel)
+      panel.ApplyTheme();
+  }
+  MoveSubWindows();
+  ::DrawMenuBar(_window);
+  ::RedrawWindow(_window, NULL, NULL,
+      RDW_INVALIDATE | RDW_ERASE | RDW_FRAME | RDW_ALLCHILDREN | RDW_UPDATENOW);
+}
+
+void CApp::SetThemeMode(unsigned mode)
+{
+  NTheme::SetMode((NTheme::EMode)mode);
+  ApplyTheme();
 }
 
 

@@ -121,6 +121,16 @@ BEGIN
       MENUITEM "Large Buttons",             IDM_VIEW_TOOLBARS_LARGE_BUTTONS
       MENUITEM "Show Buttons Text",         IDM_VIEW_TOOLBARS_SHOW_BUTTONS_TEXT
     END
+    POPUP "T&heme" MY_MENUITEM_ID(IDM_VIEW_THEME_POPUP)
+    BEGIN
+      MENUITEM "&Light",                    IDM_THEME_LIGHT
+      MENUITEM "&Dark",                     IDM_THEME_DARK
+      MENUITEM "&Auto (System)",            IDM_THEME_AUTO
+      MY_MENUITEM_SEPARATOR
+      MENUITEM "&Fluent Light",             IDM_THEME_FLUENT_LIGHT
+      MENUITEM "Fluent Dar&k",              IDM_THEME_FLUENT_DARK
+      MENUITEM "Fluent A&uto (System)",     IDM_THEME_FLUENT_AUTO
+    END
     MENUITEM "Open Root Folder\t\\",        IDM_OPEN_ROOT_FOLDER
     MENUITEM "Up One Level\tBackspace",     IDM_OPEN_PARENT_FOLDER
     MENUITEM "Folders History...\tAlt+F12", IDM_FOLDERS_HISTORY

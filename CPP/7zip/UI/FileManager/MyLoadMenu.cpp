@@ -16,6 +16,7 @@
 #include "LangUtils.h"
 #include "MyLoadMenu.h"
 #include "RegistryUtils.h"
+#include "Theme.h"
 
 #include "PropertyNameRes.h"
 #include "resource.h"
@@ -428,6 +429,11 @@ void OnMenuActivating(HWND /* hWnd */, HMENU hMenu, int position)
     menu.CheckItemByID(IDM_VIEW_TOOLBARS_LARGE_BUTTONS, g_App.LargeButtons);
     menu.CheckItemByID(IDM_VIEW_TOOLBARS_SHOW_BUTTONS_TEXT, g_App.ShowButtonsLables);
     menu.CheckItemByID(IDM_VIEW_AUTO_REFRESH, g_App.Get_AutoRefresh_Mode());
+    menu.CheckRadioItem(
+        IDM_THEME_LIGHT,
+        IDM_THEME_FLUENT_AUTO,
+        IDM_THEME_LIGHT + (unsigned)NTheme::GetMode(),
+        MF_BYCOMMAND);
     // menu.CheckItemByID(IDM_VIEW_SHOW_STREAMS, g_App.Get_ShowNtfsStrems_Mode());
     // menu.CheckItemByID(IDM_VIEW_SHOW_DELETED, g_App.ShowDeletedFiles);
 
@@ -883,6 +889,15 @@ bool OnMenuCommand(HWND hWnd, unsigned id)
 
     case IDM_VIEW_TOOLBARS_SHOW_BUTTONS_TEXT: g_App.SwitchButtonsLables(); break;
     case IDM_VIEW_TOOLBARS_LARGE_BUTTONS:     g_App.SwitchLargeButtons(); break;
+
+    case IDM_THEME_LIGHT:
+    case IDM_THEME_DARK:
+    case IDM_THEME_AUTO:
+    case IDM_THEME_FLUENT_LIGHT:
+    case IDM_THEME_FLUENT_DARK:
+    case IDM_THEME_FLUENT_AUTO:
+      g_App.SetThemeMode(id - IDM_THEME_LIGHT);
+      break;
 
     // Tools
     case IDM_OPTIONS: OptionsDialog(hWnd, g_hInstance); break;
