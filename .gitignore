@@ -7,3 +7,4 @@
 *.sfx
 resource.res
 *.pdb
+out/

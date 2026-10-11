@@ -851,6 +851,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_CREATE:
     {
       g_HWND = hWnd;
+      NWindows::g_ProcessMainWindow = hWnd;
       NTheme::ApplyToMainWindow(hWnd);
       /*
       INITCOMMONCONTROLSEX icex;

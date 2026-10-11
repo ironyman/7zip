@@ -6,7 +6,7 @@ CFLAGS = $(CFLAGS) \
 !IFDEF UNDER_CE
 LIBS = $(LIBS) Commctrl.lib
 !ELSE
-LIBS = $(LIBS) htmlhelp.lib comdlg32.lib Mpr.lib Gdi32.lib
+LIBS = $(LIBS) htmlhelp.lib comdlg32.lib Mpr.lib Gdi32.lib shlwapi.lib
 CFLAGS = $(CFLAGS) -DZ7_LONG_PATH
 !ENDIF
 
@@ -16,6 +16,7 @@ EXPLORER_OBJS = \
   $O\MyMessages.obj \
 
 COMMON_OBJS = \
+  $O\Debug.obj \
   $O\IntToString.obj \
   $O\Lang.obj \
   $O\MyString.obj \

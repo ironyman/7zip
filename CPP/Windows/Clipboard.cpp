@@ -230,20 +230,20 @@ HRESULT __stdcall DataObject::GetCanonicalFormatEtc(FORMATETC* /*pFormatEtc*/, F
 HRESULT __stdcall DataObject::SetData(FORMATETC* pFormatEtc, STGMEDIUM* pMedium, BOOL fRelease)
 {
   assert(fRelease == TRUE); //  return E_NOTIMPL;
-  // https://en.cppreference.com/w/cpp/language/aggregate_initialization#Designated_initializers
-  fmtetcs.emplace_back(FORMATETC{
-    .cfFormat = pFormatEtc->cfFormat,
-    .ptd = NULL,
-    .dwAspect = DVASPECT_CONTENT,
-    .lindex = -1,
-    .tymed = TYMED_HGLOBAL,
-  });
+  // no designated initializers here: this file is also compiled without /std:c++20 (7zG.exe)
+  FORMATETC fmt;
+  fmt.cfFormat = pFormatEtc->cfFormat;
+  fmt.ptd = NULL;
+  fmt.dwAspect = DVASPECT_CONTENT;
+  fmt.lindex = -1;
+  fmt.tymed = TYMED_HGLOBAL;
+  fmtetcs.emplace_back(fmt);
 
-  stgmeds.emplace_back(STGMEDIUM{
-    .tymed = TYMED_HGLOBAL,
-    .hGlobal = pMedium->hGlobal,
-    .pUnkForRelease = NULL,
-  });
+  STGMEDIUM stg;
+  stg.tymed = TYMED_HGLOBAL;
+  stg.hGlobal = pMedium->hGlobal;
+  stg.pUnkForRelease = NULL;
+  stgmeds.emplace_back(stg);
   return S_OK;
 }
 HRESULT __stdcall DataObject::EnumFormatEtc(DWORD dwDirection, IEnumFORMATETC** ppEnumFormatEtc)

@@ -181,6 +181,10 @@ public:
 UString MyGetNextPipeName();
 WRes MyCreateProcess(LPCWSTR imageName, const UString &params);
 
+// Owner for error messages, and the window whose position is used by
+// CProcess "overlap window" mode. The program sets it (File Manager main window).
+extern HWND g_ProcessMainWindow;
+
 }
 
 #endif

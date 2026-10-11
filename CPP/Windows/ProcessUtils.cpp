@@ -13,9 +13,9 @@
 extern bool g_IsNT;
 #endif
 
-#include "../7zip/UI/FileManager/App.h"
-
 namespace NWindows {
+
+HWND g_ProcessMainWindow = NULL;
 
 static volatile long PipeSerialNumber;
 
@@ -243,10 +243,9 @@ WRes CProcess::Create(LPCWSTR imageName, const UString &params, LPCWSTR curDir, 
       }
     }
 
-    if (_overlapWindow)
+    RECT rc;
+    if (_overlapWindow && g_ProcessMainWindow && ::GetWindowRect(g_ProcessMainWindow, &rc))
     {
-      RECT rc;
-      g_App._window.GetWindowRect(&rc);
       si.dwX = rc.left;
       si.dwY = rc.top;
 
@@ -312,7 +311,7 @@ WRes CProcess::Create(LPCWSTR imageName, const UString &params, LPCWSTR curDir, 
 
   if (result == 0)
   {
-    MessageBoxW(g_HWND, L"CreateProcessW failed", L"Failed with error", MB_ICONERROR | MB_OK);
+    MessageBoxW(g_ProcessMainWindow, L"CreateProcessW failed", L"Failed with error", MB_ICONERROR | MB_OK);
     return ::GetLastError();
   }
   return 0;
