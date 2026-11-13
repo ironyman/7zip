@@ -58,9 +58,11 @@ param(
     [string]$TimestampUrl = 'http://timestamp.digicert.com',
 
     # MSIX identity; must match Partner Center for a Store submission.
-    [string]$IdentityName = 'SevenZip.CustomBuild',
-    [string]$Publisher = 'CN=7-Zip Custom Build',
-    [string]$PublisherDisplayName = '7-Zip (custom build)',
+    [string]$IdentityName = '18414Microsoftstoreapps.Fluent7zip',
+    [string]$Publisher = 'CN=4B048AB7-B9B9-4066-B7B2-AEA97831B581',
+    [string]$PublisherDisplayName = 'ironyman',
+    # Package display name; must be a name reserved for the app in Partner Center.
+    [string]$DisplayName = 'Fluent 7zip',
     # Sign the MSIX with a self-signed certificate (subject = -Publisher) for sideloading.
     [switch]$SelfSign
 )
@@ -222,6 +224,7 @@ if ($Store) {
         Replace('@IDENTITY_NAME@', [Security.SecurityElement]::Escape($IdentityName)).
         Replace('@PUBLISHER@', [Security.SecurityElement]::Escape($Publisher)).
         Replace('@PUBLISHER_DISPLAY_NAME@', [Security.SecurityElement]::Escape($PublisherDisplayName)).
+        Replace('@DISPLAY_NAME@', [Security.SecurityElement]::Escape($DisplayName)).
         Replace('@VERSION@', $msixVersion).
         Replace('@ARCH@', $Platform)
     [IO.File]::WriteAllText((Join-Path $msixStage 'AppxManifest.xml'), $manifest, (New-Object Text.UTF8Encoding($false)))
